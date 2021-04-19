@@ -1,0 +1,8 @@
+# Pycharm specific folder
+.idea/
+# Matlab/Simulink Backup File Types and Folders
+slprj/
+*.asv
+*.slxc
+*.autosave
+*.original
