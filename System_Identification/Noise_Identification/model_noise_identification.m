@@ -1,25 +1,32 @@
-% close all;
-% clear
-% clc
 %% Calculate one step residuals
-% Setup Model
-NumberOfStates = 5;
-Nx = 5;
-% For lab
+close all;
+clear
+clc
+
+% The identifaction consists of x parts
+% Load data and used for prameter identification
+% Setup of system model
+
+%% Load Data
+
+%% Setup Model
+% The pipe model is constructed as shown in the figure with tanks at either
+% end.
+DisplayImage('pipe_sketch.jpg');
+NumberOfStates = 10;
+
+% Paramaters identified for the lab setup
 p = [0.0334154182449777,0.0806990546254455,0.006536143976304,-0.00257535506895047,0.0517389007944013];
 phi = [1,1/4.908738521234052];
 DeltaT = 0.5;
-% For Basic Test
-% p = [0.00573303726337542,0.00455712815840905,0.00100679057458217,...
-%     -6.99861868943381e-05,0.00307844320832101,0.00500000000000000];
-% phi = [1,0.00500000000000000];
-% DeltaT = 60;
 
+% System matrices - x(n+1) = A x(n) + B u(n) + Bd ud(n) + Delta
 A = BuildA(NumberOfStates,p,phi,DeltaT);
 B = BuildB(NumberOfStates,p,phi,DeltaT);
+Bd = BuildBd(NumberOfStates,2,p,phi,DeltaT);
 Delta = BuildDelta(NumberOfStates, p,DeltaT);
 
-measurements = [h; T2];
+%measurements = [h; T2];
 %% Free running
 x_est(1,:) = measurements(:,1)';
 

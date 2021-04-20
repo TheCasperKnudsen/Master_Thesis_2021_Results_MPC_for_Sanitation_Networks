@@ -8,7 +8,7 @@ addpath('models');
 %% ================================================ Load Data ================================================
 structureName = 'Lat_inflow_4_aug_states.mat';
 currentdirectory = pwd;
-filePath = strcat(currentdirectory,'\data\Data structures\');
+filePath = strcat(currentdirectory,'..\data\Data structures\');
 fullPath = fullfile(filePath, structureName);
 
 if exist(fullPath, 'file')
