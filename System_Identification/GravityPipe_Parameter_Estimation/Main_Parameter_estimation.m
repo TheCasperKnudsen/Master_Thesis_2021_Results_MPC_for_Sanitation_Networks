@@ -3,19 +3,21 @@ close all;
 clear path;
 clc;
 
-addpath('miscellaneous');
-addpath('models');
+addpath('Supporting_Functions');
+addpath('System_identification/Data');
+addpath('System_identification/GravityPipe_Parameter_Estimation');
+addpath('System_identification/GravityPipe_Parameter_Estimation/models');
+addpath('System_identification/GravityPipe_Parameter_Estimation/miscellaneous');
 %% ================================================ Load Data ================================================
 structureName = 'Lat_inflow_4_aug_states.mat';
 currentdirectory = pwd;
-filePath = strcat(currentdirectory,'..\data\Data structures\');
+filePath = strcat(currentdirectory,'\System_Identification\Data\');
 fullPath = fullfile(filePath, structureName);
 
 if exist(fullPath, 'file')
-    load(fullPath);
-    
+    load(fullPath);    
 else
-    warningMessage = sprintf('Error: You should be in Parameter Estimation Folder\n');
+    warningMessage = sprintf('Error: You should be in Root Repository folder\n');
     uiwait(errordlg(warningMessage));
     return;
 end
@@ -102,16 +104,18 @@ switch dataStructure.data_time_unit
         ioData.TimeUnit = 'hours';
 end
 %% ===================================================== Model ============================================
-addpath("models"); 
+
 if N_augmented_states > 0
-    modelName = append(dataStructure.boundary_condition, '_model_augmented')
+    modelName = append(dataStructure.boundary_condition, '_model_augmented');
 else
-    modelName = append(dataStructure.boundary_condition, '_model')
+    modelName = append(dataStructure.boundary_condition, '_model');
 end
 
 if dataStructure.lateral_inflow
-    modelName = append(modelName, '_lateral_inflow')
+    modelName = append(modelName, '_lateral_inflow');
 end
+
+modelName
 
 Ts_model = 0;                                                              % 0 - continuous model, 1,2,.. - discrete model 
 order = [size(output,2) size(input,2) N_states+N_augmented_states];        % [Ny Nu Nx] (order)
@@ -161,6 +165,7 @@ opt.SearchOption.MaxIter = 200;
 opt.SearchOption.Tolerance = 1e-15;
 
 %% =============================================== Estimation =============================================
+fprintf("========= This estimation takes long =========\n Press Stop for ending the estimation manualy")
 tic 
 sys_final = nlgreyest(ioData,sys_init, opt)                                % Parameter estimation START
 
@@ -187,7 +192,7 @@ estimatedParameters
 %% =========================== Post processing ============================
 EstimatedModelPlotter;
 %% Save session
-FileName = append('.\results\',strcat(erase(structureName,'.mat'),'_'),date);
+FileName = append('.\System_identification\GravityPipe_Parameter_Estimation\results\',strcat(erase(structureName,'.mat'),'_'),date);
 [fPath, fName, fExt] = fileparts(FileName);
 if isempty(fExt)  % No '.mat' in FileName
   fExt     = '.mat';
