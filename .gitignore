@@ -6,3 +6,5 @@ slprj/
 *.slxc
 *.autosave
 *.original
+# Results of the param. estimation
+System_Identification/GravityPipe_Parameter_Estimation/results
