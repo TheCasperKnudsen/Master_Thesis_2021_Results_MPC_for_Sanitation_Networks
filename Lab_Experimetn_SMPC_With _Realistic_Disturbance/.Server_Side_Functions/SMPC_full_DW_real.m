@@ -41,7 +41,7 @@ if isempty(lam_g)
     warmStartEnabler = evalin('base','warmStartEnabler');
     
     %Temp
-    load('Kalman_Filter/cov_matrices.mat','measCovPipe','modelCovPipe');
+    load('System_Identification/Noise_Identification/Results/model_and_messurement_cov_matrices.mat','measCovPipe','modelCovPipe');
     modelCovPipe = blkdiag(0.001,BuildModelCovPipe4Aug(modelCovPipe),0.001);
     make_LQR_real      % Calculate LQR
     
