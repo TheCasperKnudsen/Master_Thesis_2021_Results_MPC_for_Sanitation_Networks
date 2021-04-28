@@ -43,7 +43,6 @@ if isempty(lam_g)
     %Temp
     load('Kalman_Filter/cov_matrices.mat','measCovPipe','modelCovPipe');
     modelCovPipe = blkdiag(0.001,BuildModelCovPipe4Aug(modelCovPipe),0.001);
-    modelCovPipe = diag(diag(modelCovPipe));
     make_LQR_real      % Calculate LQR
     
     F_variance = evalin('base','F_variance');
@@ -57,7 +56,8 @@ X0 = X0/100;                                                               % Uni
 
 %Create forcast from disturbance reference
 disturbance = zeros(2,Hp);
-reference = ones(10,Hp)*2;
+reference = zeros(10,Hp);
+reference(1:9:10,:) = 2;
 for i=0:1:Hp-1
     start_index = time+1+i*dT*simulink_frequency;
     end_index = start_index+dT*simulink_frequency-1;
@@ -82,7 +82,7 @@ end
 u_full = full(u);
 S_full = full(S);
 S_ub_full = full(S_ub);
-lqr_contribution =min(1/60*ones(2,1), max(-1/60*ones(2,1),  K*(X0-X_pre)));
+lqr_contribution =0;%min(1/60*ones(2,1), max(-1/60*ones(2,1),  K*(X0-X_pre)));
 
 output = [min(sys.U_ub+1, max(sys.U_lb, u_full(:,1) - lqr_contribution)) ; S_full(:,1)]*60;           % Saturate the outputs
 output = [output; 2*ones(2,1)*100; S_ub_full(:,1)];

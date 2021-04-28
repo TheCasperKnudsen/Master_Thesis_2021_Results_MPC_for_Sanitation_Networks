@@ -55,7 +55,6 @@ sigma_X = opti.parameter(nT,Hp);
 sigma_U = opti.parameter(nT,Hp);              %LQR gain
 
 %% ====================================== System parameters ====================================
-%p = [0.0344584980456826,0.0864650413052119,0.00653614397630376,-0.00280609998794716,0.0550243659248174];     %4 states
 p = [0.0578290979772847,0.137832091474361,0.000100000000000000,-0.00513392718034462,0.100000000000000];
 phi = [1/4.908738521234052,1/4.908738521234052];
 
@@ -65,10 +64,10 @@ Decreasing_cost = diag((nT*Hp):-1:1)*10000000;
 sum_vector = zeros(nT * Hp,1)+1;
 P = eye(nT * Hp,nT * Hp) * 100000000000 + Decreasing_cost;
 Q = zeros(nS, nS);
-Q(1,1) = 10;                                                               % cost of tank1 state
-Q(nS,nS) = 10;                                                               % cost of tank2 state               
+Q(1,1) = 100;                                                               % cost of tank1 state
+Q(nS,nS) = 100;                                                               % cost of tank2 state               
 Q = kron(eye(Hp),Q);
-R = eye(nU * Hp,nU * Hp) * 1000;
+R = eye(nU * Hp,nU * Hp) * 1;
 
 % Rearrange X and U
 X_obj = vertcatComplete( X(:,1:end-1) - Reference);
@@ -155,7 +154,7 @@ for i = 1:1:Hp
 end
 
 for i = 1:1:Hu
-    opti.subject_to(U_lb(1) <= U(1,i) <= U_ub(1) - sqrt(sigma_U(1,i))*norminv(0.95));
+    opti.subject_to(U_lb(1) <= U(1,i) <= U_ub(1));% - sqrt(sigma_U(1,i))*norminv(0.95));
     opti.subject_to(U_lb(2) <= U(2,i) <= U_ub(2) - sqrt(sigma_U(2,i))*norminv(0.95));% bounded input  
 end
 
@@ -168,8 +167,8 @@ end
 
 % Solver options
 opts = struct;
-opts.ipopt.print_level = 0;                                                     % print enabler to command line
-opts.print_time = false;
+% opts.ipopt.print_level = 0;                                                     % print enabler to command line
+% opts.print_time = false;
 opts.expand = true;                                                             % makes function evaluations faster
 %opts.ipopt.hessian_approximation = 'limited-memory';
 opts.ipopt.max_iter = 100;                                                      % max solver iteration
