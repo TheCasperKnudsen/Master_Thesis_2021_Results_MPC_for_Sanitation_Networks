@@ -1,7 +1,7 @@
-function [EstimatedX,ErrorCo,KalmanGain] = Kalman_Filter_Pipes_4Aug(ControlInput,Disturbance,SystemMeas)
+function [EstimatedX] = Kalman_Filter_Pipes_4Aug(ControlInput,Disturbance,SystemMeas)
 %KALMAN_FILTER Summary of this function goes here
 %   Detailed explanation goes here
-
+% Can be changed to: [EstimatedX,ErrorCo,KalmanGain] = Kalman_Filter_Pipes_4Aug(ControlInput,Disturbance,SystemMeas)
 % Initialize 
 persistent PredictedP
 persistent PredictedX
