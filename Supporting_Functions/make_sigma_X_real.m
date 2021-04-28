@@ -1,15 +1,16 @@
     h1 = [1 zeros(1,9)];
     h2 = [zeros(1,9) 1];
     sigma_x = zeros(2,Hp);
-    var_D =  diag([average_dist_variance_Hp(:,time+1)]);  
+    var_D =  diag([average_dist_variance_Hp(:,time+1)]);
     var_model = modelCovPipe; 
-    var_pumps = diag([0.0142 0.0117]);
+    %var_pumps = diag([0.0142/60 0.0117/60]);
+    var_pumps = diag([0.00000142 0.00000117]);
     var_measuremants = measCovPipe;
     var_x_prev = diag(ones(10,1)*0.0001);
     sigma_u = zeros(2,Hp);
     
     for i = 1:Hp
-        var_x = full(F_variance(var_x_prev, var_D, var_model, var_pumps, K,10));
+        var_x = full(F_variance(var_x_prev, var_D, var_model, var_pumps,K,10));
         var_U = K*var_x*K';
         
         sigma_x(1,i) = h1*var_x*h1';
