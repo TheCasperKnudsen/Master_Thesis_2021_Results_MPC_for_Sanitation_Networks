@@ -2,7 +2,7 @@ clear all;
 
 %% Add paths
 
-addpath('Stocastic_MPC\supporting_functions\matlab_sf')
+addpath('Supporting_Functions')
 
 % ************ Change to own Casadi path ************
 addpath('C:\Users\Casper and Adis\Desktop\casadi-windows-matlabR2016a-v3.5.5')
@@ -13,9 +13,9 @@ import casadi.*
 %% ============================================== MPC. setup ===================================
 Hp = 24;                                % prediction horizon   
 Hu = Hp;                                % control horizion
-nS = 6;                                 % number of states
+nS = 10;                                 % number of states
 nT = 2;                                 % number of tanks
-nP = 4;                                 % number of pipe sections
+nP = 8;                                 % number of pipe sections
 nU = 2;                                 % number of control inputs
 nD = 2;
 opti = casadi.Opti();                   % opti stack 
@@ -55,7 +55,8 @@ sigma_X = opti.parameter(nT,Hp);
 sigma_U = opti.parameter(nT,Hp);              %LQR gain
 
 %% ====================================== System parameters ====================================
-p = [0.0344584980456826,0.0864650413052119,0.00653614397630376,-0.00280609998794716,0.0550243659248174];
+%p = [0.0344584980456826,0.0864650413052119,0.00653614397630376,-0.00280609998794716,0.0550243659248174];     %4 states
+p = [0.0591715867309953,0.139652097300738,0.000840889029721471,-0.00505537833798277,0.200000000000000];
 phi = [1/4.908738521234052,1/4.908738521234052];
 
 %% =========================================== Objective =======================================
@@ -65,7 +66,7 @@ sum_vector = zeros(nT * Hp,1)+1;
 P = eye(nT * Hp,nT * Hp) * 100000000000 + Decreasing_cost;
 Q = zeros(nS, nS);
 Q(1,1) = 10;                                                               % cost of tank1 state
-Q(6,6) = 10;                                                               % cost of tank2 state               
+Q(nS,nS) = 10;                                                               % cost of tank2 state               
 Q = kron(eye(Hp),Q);
 R = eye(nU * Hp,nU * Hp) * 1000;
 
@@ -88,10 +89,10 @@ u = casadi.MX.sym('u',nU);              % input
 d = casadi.MX.sym('d',nD);              % disturbance
 
 % system matricies
-A       = BuildA(nS, p, phi, dt);                                           % builds two tank topology with nS-2 pipe sections
-B       = BuildB(nS, p, phi, dt);
-Bd      = BuildBd(nS,2,p,phi,dt);                                           % allows d to enter in tank1 and in pipe section 2
-Delta   = BuildDelta(nS, p, dt);
+A       = BuildA_MX(nS, p, phi, dt);                                           % builds two tank topology with nS-2 pipe sections
+B       = BuildB_MX(nS, p, phi, dt);
+Bd      = BuildBd_MX(nS,2,p,phi,dt);                                           % allows d to enter in tank1 and in pipe section 2
+Delta   = BuildDelta_MX(nS, p, dt);
 
 % function
 system_dynamics = A*x + B*u + Bd*d + Delta;
@@ -182,10 +183,10 @@ elseif warmStartEnabler == 0
     OCP = opti.to_function('OCP',{X0,U0,D,T,Reference,sigma_X,sigma_U},{U,S,S_ub},{'x0','u0','d','dt','ref','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt'});
 end
 
-load('.\SMPC_realistic_disturbance\X_ref_sim.mat');
-load('.\SMPC_realistic_disturbance\D_sim_ens.mat');
-load('.\SMPC_realistic_disturbance\mean_disturbance.mat');
-load('.\SMPC_realistic_disturbance\average_dist_variance_Hp.mat');
+%load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');
+load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\D_sim_ens.mat');
+load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\mean_disturbance.mat');
+load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\average_dist_variance_Hp.mat');
 
 D_sim = [D_sim_ens(1,:);zeros(1,size(D_sim_ens,2)); D_sim_ens(21,:)];
 clear D_sim_ens;
