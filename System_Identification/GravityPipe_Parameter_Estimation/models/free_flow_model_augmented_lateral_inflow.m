@@ -130,9 +130,9 @@ if N5 > 1
     for j = 2:N5-1
         dx(N_states+N1+N2+N3+N4+j) = p2*x(N_states+N1+N2+N3+N4+j-1) - (p2+p3)*x(N_states+N1+N2+N3+N4 + j) + p3*x(N_states+N1+N2+N3+N4+ j+1);
     end
-    dx(N_states + N1+N2+N3+N4+N5) = p2*x(N_states+N1+N2+N3+N4+N5-1) - (p2+p3)*x(N_states + N1+N2+N3+N4+N5) + p4 -  p5*(x(N_states + N1+N2+N3+N4+N5));
+    dx(N_states + N1+N2+N3+N4+N5) = p2*x(N_states+N1+N2+N3+N4+N5-1) - p3*x(N_states + N1+N2+N3+N4+N5) + p4 -  p5*(x(N_states + N1+N2+N3+N4+N5));
 elseif N5 == 1
-    dx(N_states + N1+N2+N3+N4+1) = p2*x(4) - (p2+p3)*x(N_states + N1+N2+N3+N4+1)+ p4 -  p5*(x(N_states + N1+N2+N3+N4+1));
+    dx(N_states + N1+N2+N3+N4+1) = p2*x(4) - p3*x(N_states + N1+N2+N3+N4+1)+ p4 -  p5*(x(N_states + N1+N2+N3+N4+1));
 end
 
 
