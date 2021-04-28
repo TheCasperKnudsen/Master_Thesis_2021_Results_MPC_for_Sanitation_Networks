@@ -1,10 +1,8 @@
     h1 = [1 zeros(1,5)];
     h2 = [zeros(1,5) 1];
     sigma_x = zeros(2,Hp);
-    
-    load('Kalman_Filter/cov_matrices.mat','measCovPipe','modelCovPipe');
     var_D =  diag([average_dist_variance_Hp(:,time+1)]);  
-    var_model = BuildModelCovPipe4Aug(modelCovPipe); 
+    var_model = modelCovPipe; 
     var_pumps = diag([0.0142 0.0117]);
     var_measuremants = measCovPipe;
     var_x_prev = var_measuremants;
