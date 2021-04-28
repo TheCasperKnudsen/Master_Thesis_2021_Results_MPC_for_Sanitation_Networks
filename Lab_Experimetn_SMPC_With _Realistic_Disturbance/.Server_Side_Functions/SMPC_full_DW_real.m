@@ -50,7 +50,7 @@ X0 = X0/100;                                                               % Uni
 
 %Create forcast from disturbance reference
 disturbance = zeros(2,Hp);
-reference = ones(6,Hp)*2;
+reference = ones(10,Hp)*2;
 for i=0:1:Hp-1
     start_index = time+1+i*dT*simulink_frequency;
     end_index = start_index+dT*simulink_frequency-1;
@@ -83,7 +83,7 @@ output = [output; 2*ones(2,1)*100; S_ub_full(:,1)];
 % Set vairables for next iteration
 U0 = u_full(:,1);
 X_pre = full(sys.F_system(X0, u_full(:,1), disturbance(:,1), dT));
-for i =1:5:6
+for i =1:9:10
     if X_pre(i) > sys.X_ub(i)
         X_pre(i) = sys.X_ub(i);
     elseif X_pre(i) < sys.X_lb(i)
