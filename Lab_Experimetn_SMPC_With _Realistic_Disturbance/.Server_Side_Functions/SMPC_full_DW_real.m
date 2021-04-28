@@ -16,6 +16,8 @@ persistent sigma_u;
 persistent X_pre;
 persistent sys;
 persistent K;
+persistent measCovPipe;
+persistent modelCovPipe;
 % and others
 dT = 10;                 % Sample time in minutes
 simulink_frequency = 2;  % Sampling frequency in seconds
@@ -37,6 +39,10 @@ if isempty(lam_g)
     mean_disturbance = mean_disturbance(1:2:3,:);
     average_dist_variance_Hp = evalin('base', 'average_dist_variance_Hp');
     warmStartEnabler = evalin('base','warmStartEnabler');
+    
+    %Temp
+    load('Kalman_Filter/cov_matrices.mat','measCovPipe','modelCovPipe');
+    modelCovPipe = blkdiag(0.001,BuildModelCovPipe4Aug(modelCovPipe),0.001);
     
     make_LQR_real      % Calculate LQR
     F_variance = evalin('base','F_variance');
