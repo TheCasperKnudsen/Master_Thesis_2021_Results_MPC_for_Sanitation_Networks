@@ -2,7 +2,7 @@
     h2 = [zeros(1,9) 1];
     sigma_x = zeros(2,Hp);
     var_D =  diag([average_dist_variance_Hp(:,time+1)]);  
-    var_model = modelCovPipe; 
+    var_model = modelCovPipe;
     var_pumps = diag([0.0142 0.0117]);
     var_measuremants = measCovPipe;
     var_x_prev = diag(ones(10,1)*0.0001);
@@ -20,7 +20,7 @@
     
     analyse = 1;
     if analyse
-        tightening = sqrt(sigma_u)*norminv(0.95)*60;
+        tightening = sqrt(sigma_x)*norminv(0.95);
         figure
         plot(tightening(1,:));
         hold on;
