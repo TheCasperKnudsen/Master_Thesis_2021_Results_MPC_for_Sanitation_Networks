@@ -43,8 +43,9 @@ if isempty(lam_g)
     %Temp
     load('Kalman_Filter/cov_matrices.mat','measCovPipe','modelCovPipe');
     modelCovPipe = blkdiag(0.001,BuildModelCovPipe4Aug(modelCovPipe),0.001);
-    
+    modelCovPipe = diag(diag(modelCovPipe));
     make_LQR_real      % Calculate LQR
+    
     F_variance = evalin('base','F_variance');
 end
 % initialize CC tube controller
