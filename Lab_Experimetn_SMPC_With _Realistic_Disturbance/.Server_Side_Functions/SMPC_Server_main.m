@@ -6,7 +6,7 @@ SMPC_init_DW_real
 
 
 %%
-number_of_receiving_data = 7;
+number_of_receiving_data = 11;
 number_of_sending_data = 8;
 
 % Holding is writting registers (size is number of variables x2)
@@ -18,7 +18,7 @@ DataBaseInput = uint16(zeros(1,number_of_sending_data*4));
 % Ignore Coils
 DataBaseCoils = logical(0);
 
-Client_IP = '192.168.100.123';
+Client_IP = 'localhost';
 Port_Number = 502;
 
 display('Server is running!')
@@ -42,8 +42,8 @@ while(1)
         Updated_Measurements_data = unit16Be2doubleLe(DataBaseHolding);
       
         %Run MPC
-        X0 = Updated_Measurements_data(1,1:6)';
-        time = Updated_Measurements_data(1,7);
+        X0 = Updated_Measurements_data(1,1:10)';
+        time = Updated_Measurements_data(1,11);
         
         output = SMPC_full_DW_real(X0, time); 
         

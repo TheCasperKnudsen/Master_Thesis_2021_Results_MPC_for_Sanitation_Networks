@@ -1,4 +1,4 @@
-function [EstimatedX,ErrorCo,KalmanGain] = Kalman_Filter_Pipes(ControlInput,Disturbance,SystemMeas)
+function [EstimatedX] = Kalman_Filter_Pipes(ControlInput,Disturbance,SystemMeas)
 %KALMAN_FILTER Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,10 +11,9 @@ persistent Rm
 persistent Qm
 
 if isempty(PredictedP)
-    load('System_Identification/GravityPipe_Parameter_Estimation/results/Lab_lateral_inflow_0_aug_states_21-Apr-2021.mat','estimatedParameters','N_states');
     load('System_Identification/Noise_Identification/Results/model_and_messurement_cov_matrices.mat','measCovPipe','modelCovPipe');
-    NumberOfPipeStates = N_states;
-    parameters = estimatedParameters;
+    NumberOfPipeStates = 4;
+    parameters = [0.0344584980456826,0.0864650413052119,0.00653614397630376,-0.00280609998794716,0.0550243659248174];
     Qm = modelCovPipe;
     Rm = measCovPipe;
     

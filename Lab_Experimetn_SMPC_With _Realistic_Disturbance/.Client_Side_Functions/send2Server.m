@@ -1,6 +1,6 @@
 function send2Server(measurements, time)
     %persistent ModBusTCP
-    ModBusTCP = openConnectionClient('192.168.100.246' , 502); %open the connection
+    ModBusTCP = openConnectionClient('localhost' , 502); %open the connection
 
     
     %16 bits transaction identifier

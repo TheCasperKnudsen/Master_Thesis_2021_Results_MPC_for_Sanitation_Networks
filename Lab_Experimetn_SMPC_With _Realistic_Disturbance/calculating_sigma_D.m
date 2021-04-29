@@ -1,10 +1,10 @@
 clear all; clc;
-load('.\SMPC_realistic_disturbance\D_sim_ens');
+load('Lab_Experimetn_SMPC_With _Realistic_Disturbance/Data/D_sim_ens');
 
 %% ======== Setup for MPC =========
 D_sim_ens = D_sim_ens/60;
 Hp = 24;
-dT = 10;     %seconds
+dT = 5;     %seconds
 simulink_frequency = 2;   %1/s
 
 MPC_prediction_horizon_in_steps = Hp*dT*simulink_frequency;
@@ -29,8 +29,8 @@ end
 mean_disturbance = [mean_disturbance_T1;D_sim_ens(11,:);mean_disturbance_pipe]*60;
 average_dist_variance_Hp = [variance_prediction_T1; variance_prediction_pipe];
 
-save('SMPC_realistic_disturbance/mean_disturbance.mat','mean_disturbance');
-save('SMPC_realistic_disturbance/average_dist_variance_Hp.mat','average_dist_variance_Hp');
+save('Lab_Experimetn_SMPC_With _Realistic_Disturbance/Data/mean_disturbance.mat','mean_disturbance');
+save('Lab_Experimetn_SMPC_With _Realistic_Disturbance/Data/average_dist_variance_Hp.mat','average_dist_variance_Hp');
 %%
 figure
 for i = 1:10

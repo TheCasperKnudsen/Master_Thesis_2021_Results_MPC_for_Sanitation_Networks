@@ -1,6 +1,6 @@
 function [MPCOutput] = requestFromServer()
 
-    ModBusTCP = openConnectionClient('192.168.100.246', 502); %open the connection
+    ModBusTCP = openConnectionClient('localhost', 502); %open the connection
 
     transIDHi= uint8(randi(256));%8 bits transaction identifier
     transIDLow = uint8(randi(256));

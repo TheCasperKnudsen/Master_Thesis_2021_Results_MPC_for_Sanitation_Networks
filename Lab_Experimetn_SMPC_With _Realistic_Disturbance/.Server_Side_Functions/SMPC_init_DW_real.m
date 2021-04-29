@@ -1,7 +1,6 @@
 clear all;
 
 %% Add paths
-
 addpath('Supporting_Functions')
 
 % ************ Change to own Casadi path ************
@@ -13,27 +12,28 @@ import casadi.*
 %% ============================================== MPC. setup ===================================
 Hp = 24;                                % prediction horizon   
 Hu = Hp;                                % control horizion
-nS = 10;                                 % number of states
 nT = 2;                                 % number of tanks
 nP = 8;                                 % number of pipe sections
+nS = nT + nP;                           % number of states
 nU = 2;                                 % number of control inputs
-nD = 2;
+nD = 2;                                 % number of disturbance inputs
 opti = casadi.Opti();                   % opti stack 
 warmStartEnabler = 1;                   % warmstart for optimization
 %% ============================================ Constraint limits ==============================
-U_ub   = [8.3;15]/60;                      % input bounds
+% Input bounds - Devide by 60 to get L/sec
+U_ub   = [8.3;15]/60;                   
 U_lb   = [3.4;6]/60;
 dU_ub  = [4.5;4.5]/60;
 dU_lb  = [-4.5;-4.5]/60;
 
-Xt_1_ub  = 7.02;                          % state bounds tank
+% State bounds Tank
+Xt_1_ub  = 7.02;                          
 Xt_2_ub  = 6.43;  
-
+% State bounds pipes
 Xt_lb  = 1.8;
-Xp_ub  = 0.5;                           % state bounds pipes                          
+Xp_ub  = 0.5;                                                     
 Xp_lb  = -10;
-% Combine into system bounds
-
+% Combine into state bounds
 X_ub   = [Xt_1_ub, Xp_ub*ones(1,nP), Xt_2_ub]'; 
 X_lb   = [Xt_lb, Xp_lb*ones(1,nP), Xt_lb]'; 
 
@@ -149,12 +149,12 @@ F_variance_ol = casadi.Function('F_var', {var_x_prev, var_D, var_model, var_U, d
 % add constraints
 for i = 1:1:Hp
    opti.subject_to(X_lb(1)<=X(1,i)<=X_ub(1) + S_ub(1,i) - sqrt(sigma_X(1,i))*norminv(0.95));
-   opti.subject_to(X_lb(6)<=X(6,i)<=X_ub(6) + S_ub(2,i) - sqrt(sigma_X(2,i))*norminv(0.95));
+   opti.subject_to(X_lb(nS)<=X(nS,i)<=X_ub(nS) + S_ub(2,i) - sqrt(sigma_X(2,i))*norminv(0.95));
    opti.subject_to(zeros(nT,1) <= S_ub(:,i) <= sqrt(sigma_X(:,i))*norminv(0.95));                                 % Slack variable is always positive - Vof >= 0
 end
 
 for i = 1:1:Hu
-    opti.subject_to(U_lb(1) <= U(1,i) <= U_ub(1));% - sqrt(sigma_U(1,i))*norminv(0.95));
+    opti.subject_to(U_lb(1) <= U(1,i) <= U_ub(1) - sqrt(sigma_U(1,i))*norminv(0.95));
     opti.subject_to(U_lb(2) <= U(2,i) <= U_ub(2) - sqrt(sigma_U(2,i))*norminv(0.95));% bounded input  
 end
 
