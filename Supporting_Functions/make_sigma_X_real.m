@@ -32,7 +32,7 @@ end
 
 
 % Plot of constraint tightening - Can be ignored.
-analyse = 1;
+analyse = 0;
 if analyse
     tightening_x = sqrt(sigma_x)*norminv(0.95);
     tightening_u = sqrt(sigma_u)*norminv(0.95)*60;

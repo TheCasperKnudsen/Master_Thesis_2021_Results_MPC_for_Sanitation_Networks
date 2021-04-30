@@ -124,7 +124,7 @@ for i=1:Hp
        opti.subject_to(deltaU(:,i)==U(:,i) - U(:,i-1));
    end
    opti.subject_to(dU_lb <= (U(:,i) - U(:,i-1)) <= dU_ub);                  % bounded slew rate
-   opti.subject_to(X_lb(2:5)<=X(2:5,i)<=X_ub(2:5));  
+   opti.subject_to(X_lb(2:nS-1)<=X(2:nS-1,i)<=X_ub(2:nS-1));  
 end
 
 for i = 1:1:nT

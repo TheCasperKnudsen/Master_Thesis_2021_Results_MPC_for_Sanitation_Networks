@@ -46,7 +46,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
 
         % Get disturbance mean and variance - Used in make sigma_X_real
         load('System_Identification/Noise_Identification/Results/input_uncertainty.mat');
-        var_pumps = cov;
+        var_pumps = input_covariance;
         F_variance = evalin('base','F_variance');
         mean_disturbance = evalin('base','mean_disturbance');
         mean_disturbance = mean_disturbance(1:2:3,:);
@@ -96,7 +96,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
 
     % Create output
     output = [u_full(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
-    tank_ref = [reference(1,:);reference(end,:)]*100;   % Scale reference form dm (MPC) to mm (Lab)
+    tank_ref = [reference(1,1);reference(end,1)]*100;   % Scale reference form dm (MPC) to mm (Lab)
     output = [output; tank_ref; S_ub_full(:,1)];
 
     % Set vairables for next iteration and make sure they don't break the
