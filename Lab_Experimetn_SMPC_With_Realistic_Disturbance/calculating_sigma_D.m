@@ -1,5 +1,5 @@
 clear all; clc;
-load('Lab_Experimetn_SMPC_With _Realistic_Disturbance/Data/D_sim_ens');
+load('Lab_Experimetn_SMPC_With_Realistic_Disturbance/Data/D_sim_ens');
 
 %% ======== Setup for MPC =========
 D_sim_ens = D_sim_ens/60;
@@ -29,8 +29,8 @@ end
 mean_disturbance = [mean_disturbance_T1;D_sim_ens(11,:);mean_disturbance_pipe]*60;
 average_dist_variance_Hp = [variance_prediction_T1; variance_prediction_pipe];
 
-save('Lab_Experimetn_SMPC_With _Realistic_Disturbance/Data/mean_disturbance.mat','mean_disturbance');
-save('Lab_Experimetn_SMPC_With _Realistic_Disturbance/Data/average_dist_variance_Hp.mat','average_dist_variance_Hp');
+save('Lab_Experimetn_SMPC_With_Realistic_Disturbance/Data/mean_disturbance.mat','mean_disturbance');
+save('Lab_Experimetn_SMPC_With_Realistic_Disturbance/Data/average_dist_variance_Hp.mat','average_dist_variance_Hp');
 %%
 figure
 for i = 1:10

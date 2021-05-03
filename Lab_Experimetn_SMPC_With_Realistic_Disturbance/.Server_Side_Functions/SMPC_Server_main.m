@@ -1,7 +1,6 @@
 %% ======================== Initialize the MPC ============================
 clear all;
 clc;
-addpath(genpath('Lab_Stochastic_MPC_full_system_Linear_DW_Ofload_to_Server'));
 SMPC_init_DW_real
 
 

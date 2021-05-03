@@ -8,7 +8,7 @@ function send2Server(measurements, time)
     transIDLow = uint8(randi(256));
     %Dosn't matter
     ProtID=uint8(0);%8 bits protocol id
-    Lenght =uint8(23); % 8bits Remaining bytes 
+    Lenght =uint8(7+(size(measurements,1)*4 + 4)*2); % 8bits Remaining bytes 
     UnitID = uint8(1); % Unit ID (1)
 
     FunCod = uint8(16); % Function code to write multiple holding registers

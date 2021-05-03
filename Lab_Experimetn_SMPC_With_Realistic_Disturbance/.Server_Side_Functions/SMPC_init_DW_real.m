@@ -62,10 +62,10 @@ phi = [1/4.908738521234052,1/4.908738521234052];
 % Weights
 Decreasing_cost = diag((nT*Hp):-1:1)*10000000;
 sum_vector = zeros(nT * Hp,1)+1;
-P = eye(nT * Hp,nT * Hp) * 100000000000 + Decreasing_cost;
+P = eye(nT * Hp,nT * Hp) * 1000000000 + Decreasing_cost;
 Q = zeros(nS, nS);
-Q(1,1) = 100;                                                               % cost of tank1 state
-Q(nS,nS) = 100;                                                               % cost of tank2 state               
+Q(1,1) = 10;                                                               % cost of tank1 state
+Q(nS,nS) = 10;                                                               % cost of tank2 state               
 Q = kron(eye(Hp),Q);
 R = eye(nU * Hp,nU * Hp) * 1;
 
@@ -149,7 +149,7 @@ F_variance_ol = casadi.Function('F_var', {var_x_prev, var_D, var_model, var_U, d
 
 % add constraints
 for i = 1:1:Hp
-   opti.subject_to(X_lb(1)<=X(1,i)<=X_ub(1) + S_ub(1,i) - sqrt(sigma_X(1,i))*norminv(0.95));
+   opti.subject_to(X_lb(1)<= X(1,i) <=X_ub(1) + S_ub(1,i) - sqrt(sigma_X(1,i))*norminv(0.95));
    opti.subject_to(X_lb(nS)<=X(nS,i)<=X_ub(nS) + S_ub(2,i) - sqrt(sigma_X(2,i))*norminv(0.95));
    opti.subject_to(zeros(nT,1) <= S_ub(:,i) <= sqrt(sigma_X(:,i))*norminv(0.95));                                 % Slack variable is always positive - Vof >= 0
 end
@@ -184,9 +184,9 @@ elseif warmStartEnabler == 0
 end
 
 %load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');
-load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\D_sim_ens.mat');
-load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\mean_disturbance.mat');
-load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\average_dist_variance_Hp.mat');
+load('Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\D_sim_ens.mat');
+load('Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\mean_disturbance.mat');
+load('Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\average_dist_variance_Hp.mat');
 
 D_sim = [D_sim_ens(1,:);zeros(1,size(D_sim_ens,2)); D_sim_ens(21,:)];
 clear D_sim_ens;

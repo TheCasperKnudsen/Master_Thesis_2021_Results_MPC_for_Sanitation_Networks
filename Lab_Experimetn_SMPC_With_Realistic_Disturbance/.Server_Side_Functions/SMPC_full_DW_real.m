@@ -86,7 +86,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
 
     % Get numeric values for results
     u_full = full(u);
-    S_full = full(S);
+    S_full = full(S)
     S_ub_full = full(S_ub);
 
 
@@ -102,7 +102,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % Set vairables for next iteration and make sure they don't break the
     % bounds.
     U0 = u_full(:,1);
-    X_pre = full(sys.F_system(X0, u_full(:,1), disturbance(:,1), dT));
+    X_pre = full(sys.F_system(X0, u_full(:,1), disturbance(:,1), 0, dT));
     for i =1:9:10
         if X_pre(i) > sys.X_ub(i)
             X_pre(i) = sys.X_ub(i);
