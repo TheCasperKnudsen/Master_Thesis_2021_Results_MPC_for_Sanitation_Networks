@@ -1,6 +1,10 @@
 % Seperating the output variables:
-U = output(1:2,:)/60;
-Overflow = output(3:4,:)/60;
+U = zeros(2,Hp);
+U(1,:) = output(9:9+Hp,:)'/60;
+U(2,:) = output(9+Hp+1:9+Hp+1+Hp,:)'/60;
+Overflow = zeros(2,Hp);
+Overflow(1,:) = output(10+2*Hp+1:10+3*Hp+1,:)'/60;
+Overflow(2,:) = output(10+3*Hp+2:10+4*Hp+2,:)'/60;
 X_ref = output(5:6,:);
 S_ub = output(7:8,:);
 dT = 5  %s
@@ -11,13 +15,14 @@ disturbance = zeros(2,Hp);
 for i=0:1:Hp-1
     start_index = time+1+i*dT*simulink_frequency;
     end_index = start_index+dT*simulink_frequency-1;
-    disturbance(:,i+1) = mean(mean_disturbance(:,start_index:end_index),2)/60;
+    disturbance(:,i+1) = mean(mean_disturbance(1:2:3,start_index:end_index),2)/60;
 end
 
 % MPC prediction:
+X_prediction = zeros(nS, Hp+1);
 X_prediction(:,1) = X0/100;
 for j=1:1:Hp
-    X_prediction(:,j+1) = full(F_system(X_prediction(:,j), U(:,j), disturbance(:,j), dT ));
+    X_prediction(:,j+1) = full(F_system(X_prediction(:,j), U(:,j), disturbance(:,j), Overflow(:,j), dT ));
 end
 
 % Previous state values:
@@ -29,7 +34,7 @@ ax(1) = subplot(2,1,1);
 plot(min(time-5*dT,0):dT:time,X_previous(1,:),'r','LineWidth',1);
 hold on;
 % Prediction plot
-plot(time+dT:dT:time+dT*Hp-dT,full(X_prediction(1,:)),'b','LineWidth',1.75);
+plot(time+dT:dT:time+dT*Hp-dT,X_prediction(1,:),'b','LineWidth',1.75);
 hold on;
 % % Reference plot
 % plot(0:1:Hp-1+i,ones(1,size(0:1:Hp-1+i,2))*R_sim,'k','LineWidth',1);

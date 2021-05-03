@@ -52,7 +52,7 @@ while(1)
         time = Updated_Measurements_data(1,11);
         
         output = SMPC_full_DW_real(X0, time); 
-        
+        send2Client_output = output(1:8,:);
         %Prepare calculations for sending to client
         data2Send = flip(output');
         DataBaseInput = flip(typecast(data2Send,'uint16'));
