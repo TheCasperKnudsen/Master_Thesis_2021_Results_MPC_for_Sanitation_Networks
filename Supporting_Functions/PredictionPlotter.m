@@ -53,7 +53,7 @@ title('Prediction with chance constraint and high reference');
 if time <= 5
     xlim([0,37]);
 else
-    xlim([i-5,i-5+37]);
+    xlim([time-5,time-5+37]);
 end
 
 
@@ -69,8 +69,8 @@ set(leg,'Interpreter','latex');
 ylim([0,0.03]);
 xlabel('k','Interpreter','latex');
 ylabel('$u_k$','Interpreter','latex')
-if i <= 5
+if time <= 5
     xlim([0,37]);
 else
-    xlim([i-5,i-5+37]);
+    xlim([time-5,time-5+37]);
 end
