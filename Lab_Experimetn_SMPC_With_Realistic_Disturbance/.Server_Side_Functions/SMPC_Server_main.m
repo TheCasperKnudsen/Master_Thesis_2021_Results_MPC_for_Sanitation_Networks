@@ -3,6 +3,14 @@ clear all;
 clc;
 SMPC_init_DW_real
 
+% Enable/Disable plotting 
+plotting = true;
+
+if plotting 
+    figure
+    X_previous = zeros(10,5);
+    U_previous = zeros(2,5);
+end
 
 %%
 number_of_receiving_data = 11;
@@ -45,15 +53,14 @@ while(1)
         time = Updated_Measurements_data(1,11);
         
         output = SMPC_full_DW_real(X0, time); 
-        
-%         U = output(1:2,:);
-%         Overflow = output(3:4,:);
-%         X_ref = output(5:6,:);
-%         S_ub = output(7:8,:);
-        
+        send2Client_output = output(1:8,:);
         %Prepare calculations for sending to client
         data2Send = flip(output');
         DataBaseInput = flip(typecast(data2Send,'uint16'));
+        
+        if plotting
+            PredictionPlotter
+        end
     end
     
     fclose(ModBusTCP);

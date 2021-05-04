@@ -98,6 +98,9 @@ function [output]  = SMPC_full_DW_real(X0,time)
     output = [u_full(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
     tank_ref = [reference(1,1);reference(end,1)]*100;   % Scale reference form dm (MPC) to mm (Lab)
     output = [output; tank_ref; S_ub_full(:,1)];
+    
+    % Augmenting the output for plotting
+    output = [output; u_full(1,:)';u_full(2,:)';S_full(1,:)';S_full(2,:)'];
 
     % Set vairables for next iteration and make sure they don't break the
     % bounds.
