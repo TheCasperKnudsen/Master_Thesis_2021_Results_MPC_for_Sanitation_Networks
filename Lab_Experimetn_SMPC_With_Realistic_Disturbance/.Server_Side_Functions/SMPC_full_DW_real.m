@@ -86,16 +86,16 @@ function [output]  = SMPC_full_DW_real(X0,time)
 
     % Get numeric values for results
     u_full = full(u);
-    S_full = full(S)
+    S_full = full(S);
     S_ub_full = full(S_ub);
 
 
     % Find LQR contribution and saturate control input
     lqr_contribution = min(1/60*ones(2,1), max(-1/60*ones(2,1),  K*(X0-X_pre)));
-    u_full = min(sys.U_ub, max(sys.U_lb, u_full(:,1) - lqr_contribution));
+    u_2_implement = min(sys.U_ub, max(sys.U_lb, u_full(:,1) - lqr_contribution));
 
     % Create output
-    output = [u_full(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
+    output = [u_2_implement(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
     tank_ref = [reference(1,1);reference(end,1)]*100;   % Scale reference form dm (MPC) to mm (Lab)
     output = [output; tank_ref; S_ub_full(:,1)];
     

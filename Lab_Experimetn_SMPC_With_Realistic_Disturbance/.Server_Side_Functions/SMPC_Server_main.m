@@ -10,6 +10,7 @@ if plotting
     figure
     X_previous = zeros(10,5);
     U_previous = zeros(2,5);
+    Overflow_previous = zeros(2,5);
 end
 
 %%
@@ -55,7 +56,7 @@ while(1)
         output = SMPC_full_DW_real(X0, time); 
         send2Client_output = output(1:8,:);
         %Prepare calculations for sending to client
-        data2Send = flip(output');
+        data2Send = flip(send2Client_output');
         DataBaseInput = flip(typecast(data2Send,'uint16'));
         
         if plotting
