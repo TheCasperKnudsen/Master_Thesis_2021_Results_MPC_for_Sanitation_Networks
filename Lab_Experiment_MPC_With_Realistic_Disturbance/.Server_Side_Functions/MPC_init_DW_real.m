@@ -29,7 +29,7 @@ dU_lb  = [-4.5;-4.5]/60;
 Xt_1_ub  = 7.02;                          
 Xt_2_ub  = 6.43;  
 % State bounds pipes
-Xt_lb  = 1.8;
+Xt_lb  = 1.5;
 Xp_ub  = 0.5;                                                     
 Xp_lb  = -10;
 % Combine into state bounds
@@ -55,14 +55,14 @@ phi = [1/4.908738521234052,1/4.908738521234052];
 
 %% =========================================== Objective =======================================
 % Weights
-Decreasing_cost = diag((nT*Hp):-1:1)*10000000;
+Decreasing_cost = diag((nT*Hp):-1:1)*1000000000;
 sum_vector = zeros(nT * Hp,1)+1;
-P = eye(nT * Hp,nT * Hp) * 1000000000 + Decreasing_cost;
+P = eye(nT * Hp,nT * Hp) + Decreasing_cost;
 Q = zeros(nS, nS);
-Q(1,1) = 10;                                                               % cost of tank1 state
-Q(nS,nS) = 10;                                                             % cost of tank2 state               
+Q(1,1) = 1;                                                                 % cost of tank1 state
+Q(nS,nS) = 1;                                                               % cost of tank2 state               
 Q = kron(eye(Hp),Q);
-R = eye(nU * Hp,nU * Hp) * 1;
+R = eye(nU * Hp,nU * Hp) * 0.1;
 
 % Rearrange X and U
 X_obj = vertcatComplete( X(:,1:end-1) - Reference);

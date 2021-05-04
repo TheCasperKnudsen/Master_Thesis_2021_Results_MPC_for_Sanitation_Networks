@@ -12,6 +12,10 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % Info from previous MPC run.
     persistent U0;
     persistent X_pre;
+    persistent sys;
+    
+    %Persistent Forcast
+    persistent mean_disturbance; 
 
     % Constants
     dT = 5;                 % Sample time in minutes
@@ -22,7 +26,8 @@ function [output]  = SMPC_full_DW_real(X0,time)
         % Get MPC problem and setup warmstart
         OCP = evalin('base','OCP');
         Hp = evalin('base','Hp');
-
+        sys = evalin('base','sys');
+        
         warmStartEnabler = evalin('base','warmStartEnabler');
         lam_g = 1;
         x_init = 0.001;
@@ -31,6 +36,9 @@ function [output]  = SMPC_full_DW_real(X0,time)
         % Initialize MPC inputs
         U0 = [3;4.5];
         X_pre = X0/100;  
+        mean_disturbance = evalin('base','mean_disturbance');
+        mean_disturbance = mean_disturbance(1:2:3,:);
+    
     end
     
     %Create forcast from disturbance reference

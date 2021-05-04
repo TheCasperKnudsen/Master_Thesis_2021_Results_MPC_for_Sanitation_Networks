@@ -1,7 +1,7 @@
 %% ======================== Initialize the MPC ============================
 clear all;
 clc;
-SMPC_init_DW_real
+MPC_init_DW_real
 
 
 %%
@@ -44,7 +44,7 @@ while(1)
         X0 = Updated_Measurements_data(1,1:10)';
         time = Updated_Measurements_data(1,11);
         
-        output = SMPC_full_DW_real(X0, time); 
+        output = MPC_full_DW_real(X0, time); 
         
 %         U = output(1:2,:);
 %         Overflow = output(3:4,:);
