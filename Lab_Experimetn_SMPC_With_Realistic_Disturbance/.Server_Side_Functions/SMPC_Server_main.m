@@ -9,6 +9,7 @@ plotting = true;
 if plotting 
     figure
     X_previous = zeros(10,5);
+    U_previous = zeros(2,5);
 end
 
 %%
