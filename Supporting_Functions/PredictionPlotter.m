@@ -8,6 +8,7 @@ Control_input_pumps(2,:) = output(9+Hp:9+2*Hp-1,:)';
 Overflow = zeros(2,Hp);
 Overflow(1,:) = output(9+2*Hp:9+3*Hp-1,:)';
 Overflow(2,:) = output(9+3*Hp:9+4*Hp-1,:)';
+adjustment = output(end-1:end,:);
 X_ref = output(5:6,:);
 S_ub = output(7:8,:);
 dT = 5;  %s
@@ -47,6 +48,8 @@ plot(time-4*dT:dT:time,X_previous(10,:),'r','LineWidth',1);
 hold on;
 % Prediction plot
 plot(time:dT:time+dT*Hp,X_prediction(10,:),'b','LineWidth',1.75);
+hold on;
+plot(time:dT:time+dT, adjustment(tank_select)*ones(1,2),'k','LineWidth',1.75);
 hold on;
 % % Reference plot
 % plot(0:1:Hp-1+i,ones(1,size(0:1:Hp-1+i,2))*R_sim,'k','LineWidth',1);

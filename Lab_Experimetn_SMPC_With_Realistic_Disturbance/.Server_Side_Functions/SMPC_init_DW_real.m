@@ -27,8 +27,8 @@ dU_ub  = [4.5;4.5]/60;
 dU_lb  = [-4.5;-4.5]/60;
 
 % State bounds Tank
-Xt_1_ub  = 7.02;                          
-Xt_2_ub  = 6.43;  
+Xt_1_ub  = 6.99;                          
+Xt_2_ub  = 6.80;            % New tank2 upper bound   
 % State bounds pipes
 Xt_lb  = 1.8;
 Xp_ub  = 0.5;                                                     
@@ -49,6 +49,7 @@ D  = opti.parameter(nD,Hp);             % disturbance - rain inflow
 X0 = opti.parameter(nS);                % initial state - level
 U0 = opti.parameter(nU);                % the previous control
 T  = opti.parameter(1);                 % MPC model_level sampling time
+Ub_adjust = opti.parameter(nT);         % Used to make "hypothetical" upper bound
 Reference  = opti.parameter(nS,Hp);        % reference
 
 sigma_X = opti.parameter(nT,Hp);
@@ -60,9 +61,14 @@ phi = [1/4.908738521234052,1/4.908738521234052];
 
 %% =========================================== Objective =======================================
 % Weights
-Decreasing_cost = diag((nT*Hp):-1:1)*10000000;
+tankWight = zeros((nT*Hp),1);
+tankWight(2:2:end) = 1;
+tankWight(1:2) = tankWight(1:2)  + 10;
+tankWight = tankWight + ((nT*Hp):-1:1)';
+Decreasing_cost = diag(tankWight) * 1000;
+
 sum_vector = zeros(nT * Hp,1)+1;
-P = eye(nT * Hp,nT * Hp) * 1000000000 + Decreasing_cost;
+P = eye(nT * Hp,nT * Hp) + Decreasing_cost;
 Q = zeros(nS, nS);
 Q(1,1) = 10;                                                               % cost of tank1 state
 Q(nS,nS) = 10;                                                               % cost of tank2 state               
@@ -76,7 +82,7 @@ U_obj = vertcatComplete(U);
 S_obj = vertcatComplete(S);
 
 % Objective function
-objective = X_obj'*Q*X_obj + S_obj'* P * sum_vector + deltaU_obj'*R*deltaU_obj + 10000000*sum(sum(S_ub'));% + U_obj'*R*U_obj;
+objective = X_obj'*Q*X_obj + S_obj'* P * sum_vector + deltaU_obj'*R*deltaU_obj + 100*sum(sum(S_ub'));% + U_obj'*R*U_obj;
 opti.minimize(objective);
 
 %% ============================================ Dynamics =======================================
@@ -151,7 +157,11 @@ F_variance_ol = casadi.Function('F_var', {var_x_prev, var_D, var_model, var_U, d
 for i = 1:1:Hp
    opti.subject_to(X_lb(1)<= X(1,i) <=X_ub(1) + S_ub(1,i) - sqrt(sigma_X(1,i))*norminv(0.95));
    opti.subject_to(X_lb(nS)<=X(nS,i)<=X_ub(nS) + S_ub(2,i) - sqrt(sigma_X(2,i))*norminv(0.95));
-   opti.subject_to(zeros(nT,1) <= S_ub(:,i) <= sqrt(sigma_X(:,i))*norminv(0.95));                                 % Slack variable is always positive - Vof >= 0
+   if i == 1
+        opti.subject_to(zeros(nT,1) <= S_ub(:,i) <= sqrt(sigma_X(:,i))*norminv(0.95) + Ub_adjust);
+   else
+        opti.subject_to(zeros(nT,1) <= S_ub(:,i) <= sqrt(sigma_X(:,i))*norminv(0.95));     % Slack variable is always positive - Vof >= 0
+   end
 end
 
 for i = 1:1:Hu
@@ -177,10 +187,10 @@ opti.solver('ipopt',opts);
 
 if warmStartEnabler == 1
     % Parametrized Open Loop Control problem with WARM START
-    OCP = opti.to_function('OCP',{X0,U0,D,opti.lam_g,opti.x,T,Reference,sigma_X,sigma_U},{U,S,S_ub,opti.lam_g,opti.x},{'x0','u0','d','lam_g','x_init','dt','ref','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt','lam_g','x_init'});
+    OCP = opti.to_function('OCP',{X0,U0,D,opti.lam_g,opti.x,T,Reference,Ub_adjust, sigma_X,sigma_U},{U,S,S_ub,opti.lam_g,opti.x},{'x0','u0','d','lam_g','x_init','dt','ref','ub_adjustment','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt','lam_g','x_init'});
 elseif warmStartEnabler == 0
     % Parametrized Open Loop Control problem without WARM START 
-    OCP = opti.to_function('OCP',{X0,U0,D,T,Reference,sigma_X,sigma_U},{U,S,S_ub},{'x0','u0','d','dt','ref','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt'});
+    OCP = opti.to_function('OCP',{X0,U0,D,T,Reference,Ub_adjust, sigma_X,sigma_U},{U,S,S_ub},{'x0','u0','d','dt','ref','ub_adjustment','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt'});
 end
 
 %load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');

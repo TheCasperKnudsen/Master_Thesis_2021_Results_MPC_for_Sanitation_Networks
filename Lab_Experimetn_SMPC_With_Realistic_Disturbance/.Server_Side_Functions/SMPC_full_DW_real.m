@@ -74,14 +74,24 @@ function [output]  = SMPC_full_DW_real(X0,time)
 
 
     % Scale inputs from mm (measurements) to dm (MPC)
-    X0 = X0/100;        
+    X0 = X0/100;
+    % Calculate the upper bound on tank state adjustment
+    Ub_adjust = zeros(2,1);
+    
+    if X0(1) >= sys.X_ub(1)
+        Ub_adjust(1) = X0(1) - sys.X_ub(1);
+    end
+    if X0(10) >= sys.X_ub(10)
+        Ub_adjust(2) = X0(10) - sys.X_ub(10);
+    end
+    
     % run openloop MPC
     if warmStartEnabler == 1
         % Parametrized Open Loop Control problem with WARM START
-        [u , S, S_ub, lam_g, x_init] = (OCP(X0,U0,disturbance, lam_g, x_init, dT,reference,sigma_x,sigma_u));
+        [u , S, S_ub, lam_g, x_init] = (OCP(X0,U0,disturbance, lam_g, x_init, dT,reference,Ub_adjust, sigma_x,sigma_u));
     elseif warmStartEnabler == 0
         % Parametrized Open Loop Control problem without WARM START 
-        [u , S, S_ub] = (OCP(X0 ,U0, disturbance, dT, reference,sigma_x,sigma_u));
+        [u , S, S_ub] = (OCP(X0 ,U0, disturbance, dT, reference,Ub_adjust,sigma_x,sigma_u));
     end
 
     % Get numeric values for results
@@ -97,7 +107,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % Create output
     output = [u_2_implement(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
     tank_ref = [reference(1,1);reference(end,1)]*100;   % Scale reference form dm (MPC) to mm (Lab)
-    output = [output; tank_ref; S_ub_full(:,1)];
+    output = [output; tank_ref; S_ub_full(:,1);Ub_adjust];
     
     % Augmenting the output for plotting
     output = [output; u_full(1,:)';u_full(2,:)';S_full(1,:)';S_full(2,:)'];
