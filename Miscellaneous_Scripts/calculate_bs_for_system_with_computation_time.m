@@ -6,9 +6,9 @@ NumberOfStates = 10;
 p = [0.0578290979772850,0.137832091474361,0.000100000000000000,-0.00513392718034500,0.100000000000000];
 phi = [1/(1.25^2*pi), 1/(1.25^2*pi)]
 %controlling a system with description: 
-A = BuildA(NumberOfStates,p,phi,1);
-B = BuildB(NumberOfStates,p,phi,1);
-
+A = BuildAContinues(NumberOfStates,p,phi);
+B = BuildBContinues(NumberOfStates,p,phi);
+Bdiscrete = BuildB(NumberOfStates,p,phi,5)
 
 %% Find B1 and B2
 
