@@ -28,7 +28,7 @@ dU_lb  = [-4.5;-4.5]/60;
 
 % State bounds Tank
 Xt_1_ub  = 6.99;                          
-Xt_2_ub  = 6.80;            % New tank2 upper bound   
+Xt_2_ub  = 6.50;            % New tank2 upper bound   
 % State bounds pipes
 Xt_lb  = 1.8;
 Xp_ub  = 0.5;                                                     
@@ -124,7 +124,7 @@ end
 
 % Dynamic constraints
 for i=1:Hp                             
-   opti.subject_to(X(:,i+1)==F_system(X(:,i), U(:,i), D(:,i),S(:,i), T));
+   opti.subject_to(X(:,i+1)==F_system(X(:,i), U(:,i), D(:,i), S(:,i), T));
    if i == 1
        opti.subject_to(deltaU(:,i)==U(:,i) - U0)
    else

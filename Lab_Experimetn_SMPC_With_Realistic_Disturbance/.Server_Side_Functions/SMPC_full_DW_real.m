@@ -105,12 +105,13 @@ function [output]  = SMPC_full_DW_real(X0,time)
     u_2_implement = min(sys.U_ub, max(sys.U_lb, u_full(:,1) - lqr_contribution));
 
     % Create output
-    output = [u_2_implement(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
+    client_output = [u_2_implement(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
     tank_ref = [reference(1,1);reference(end,1)]*100;   % Scale reference form dm (MPC) to mm (Lab)
-    output = [output; tank_ref; S_ub_full(:,1);Ub_adjust];
+    client_output = [client_output; tank_ref; S_ub_full(:,1)];
     
     % Augmenting the output for plotting
-    output = [output; u_full(1,:)';u_full(2,:)';S_full(1,:)';S_full(2,:)'];
+    output = [client_output; ...
+        u_full(1,:)';u_full(2,:)';S_full(1,:)';S_full(2,:)';S_ub_full(1,:)';S_ub_full(2,:)'; Ub_adjust];
 
     % Set vairables for next iteration and make sure they don't break the
     % bounds.

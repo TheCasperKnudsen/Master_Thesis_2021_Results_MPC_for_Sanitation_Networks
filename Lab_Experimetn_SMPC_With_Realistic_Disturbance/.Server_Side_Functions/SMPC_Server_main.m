@@ -13,6 +13,11 @@ if plotting
     Overflow_previous = zeros(2,5);
 end
 
+% Initialize output variables
+Control_input_pumps = zeros(2,Hp);
+Overflow = zeros(2,Hp);
+Tightening = zeros(2,Hp);
+
 %%
 number_of_receiving_data = 11;
 number_of_sending_data = 8;
@@ -55,6 +60,20 @@ while(1)
         
         output = SMPC_full_DW_real(X0, time); 
         send2Client_output = output(1:8,:);
+        
+        %Seperate the output into variables
+        Control_input_pumps(1,:) = output(9:9+Hp-1,:)';
+        Control_input_pumps(2,:) = output(9+Hp:9+2*Hp-1,:)';
+        
+        Overflow(1,:) = output(9+2*Hp:9+3*Hp-1,:)';
+        Overflow(2,:) = output(9+3*Hp:9+4*Hp-1,:)';
+        
+        Tightening(1,:) = output(9+4*Hp:9+5*Hp-1,:)';
+        Tightening(2,:) = output(9+5*Hp:9+6*Hp-1,:)';
+        
+        adjustment = output(end-1:end,:);
+        X_ref = output(5:6,:);
+        
         %Prepare calculations for sending to client
         data2Send = flip(send2Client_output');
         DataBaseInput = flip(typecast(data2Send,'uint16'));

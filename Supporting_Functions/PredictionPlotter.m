@@ -1,16 +1,7 @@
 % Select tank 1 or 2
 tank_select = 2;
 
-% Seperating the output variables:
-Control_input_pumps = zeros(2,Hp);
-Control_input_pumps(1,:) = output(9:9+Hp-1,:)';
-Control_input_pumps(2,:) = output(9+Hp:9+2*Hp-1,:)';
-Overflow = zeros(2,Hp);
-Overflow(1,:) = output(9+2*Hp:9+3*Hp-1,:)';
-Overflow(2,:) = output(9+3*Hp:9+4*Hp-1,:)';
-adjustment = output(end-1:end,:);
-X_ref = output(5:6,:);
-S_ub = output(7:8,:);
+% Defining time variables for plotting and disturbance selection
 dT = 5;  %s
 simulink_frequency = 2;
 
