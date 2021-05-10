@@ -5,7 +5,7 @@ function [A] = BuildAContinues(NumberOfStates,p,phi)
 
 A = zeros(NumberOfStates,NumberOfStates);
 
-A(1,:) = [1, zeros(1,NumberOfStates-1)];
+A(1,:) = [0, zeros(1,NumberOfStates-1)];
 
 A(2,:) = [0, - p(2)  , p(3)  , zeros(1,NumberOfStates-3)]; 
 
@@ -17,6 +17,6 @@ end
 A(NumberOfStates-1,:) = [zeros(1,NumberOfStates-3), p(2) ,...
                         - ( p(5) + p(3) )   , 0]; %Last pipe section
 A(NumberOfStates,:)   = [zeros(1,NumberOfStates-2), phi(2) * p(5) / p(1)...
-                         , 1]; %Tank
+                         , 0]; %Tank
 end
 

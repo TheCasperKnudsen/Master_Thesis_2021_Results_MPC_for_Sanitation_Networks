@@ -1,4 +1,4 @@
-function Bof = BuildBofContinues(NumberOfStates,phi,DeltaT)
+function Bof = BuildBofContinues(NumberOfStates,phi)
 %BUILDBd Returns the Bof matrix for the two tank topology
 %The first tank is included in the B matrix. dim(phi) = (1,2)
 

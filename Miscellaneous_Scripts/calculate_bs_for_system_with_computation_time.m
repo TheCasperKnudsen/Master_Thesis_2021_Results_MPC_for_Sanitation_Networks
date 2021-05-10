@@ -8,14 +8,17 @@ phi = [1/(1.25^2*pi), 1/(1.25^2*pi)]
 %controlling a system with description: 
 A = BuildAContinues(NumberOfStates,p,phi);
 B = BuildBContinues(NumberOfStates,p,phi);
+Delta = BuildDeltaContinues(NumberOfStates, p);
+Bd = BuildBdContinues(NumberOfStates,2,p,phi)
+
+Bddiscrete = BuildBd(NumberOfStates,2,p,phi,5);
+Deltadiscrete = BuildDelta(NumberOfStates, p,5);
 Bdiscrete = BuildB(NumberOfStates,p,phi,5)
 
 %% Find B1 and B2
 
-%B1 and B2 is dependant on a integral
-func = @(t) expm(A * t);
-numInt = integral(func,0,tau, 'ArrayValued', 1);
-B1 = expm(A*(Ts-tau))*numInt*B
- 
-numInt = integral(func,0,Ts-tau,'ArrayValued', 1);
-B2 = numInt*B
+[b1,b2] = ComputationTimeCompensationB(A,B,Ts,tau);
+[bd1,bd2] = ComputationTimeCompensationB(A,Bd,Ts,tau);
+[newDelta1,newDelta2] = ComputationTimeCompensationB(A,Delta,Ts,tau);
+[Deltak,Deltakm1] = ComputationTimeCompensationDelta(A,Delta,Ts,tau);
+
