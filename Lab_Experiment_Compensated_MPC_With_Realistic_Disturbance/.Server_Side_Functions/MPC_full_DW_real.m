@@ -12,6 +12,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % Info from previous MPC run.
     persistent U0;
     persistent S0;
+    persistent D0;
     persistent sys;
     
     %Persistent Forcast
@@ -35,6 +36,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
         % Initialize MPC inputs
         U0 = [3;4.5];
         S0 = [0;0];
+        D0 = [0;0];
         X_pre = X0/100;  
         mean_disturbance = evalin('base','mean_disturbance');
         mean_disturbance = mean_disturbance(1:2:3,:);
@@ -58,10 +60,10 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % Parametrized Open Loop Control problem with WARM START    
     if warmStartEnabler == 1
         % Parametrized Open Loop Control problem with WARM START
-        [u , S, lam_g, x_init] = OCP(X0, U0, S0, disturbance, lam_g, x_init, reference);
+        [u , S, lam_g, x_init] = OCP(X0, U0, S0, disturbance, D0, lam_g, x_init, reference);
     elseif warmStartEnabler == 0
         % Parametrized Open Loop Control problem without WARM START 
-        [u , S] = (OCP(X0 ,U0, S0, disturbance, reference));
+        [u , S] = (OCP(X0 ,U0, S0, disturbance, D0, reference));
     end
 
     % Get numeric values for results
@@ -76,4 +78,5 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % Values for next run
     U0 = u_full(:,1);
     S0 = S_full(:,1);
+    D0 = disturbance(:,1);
 end

@@ -48,7 +48,8 @@ S  = opti.variable(nT,Hp);              % slack - overflow volume
 D  = opti.parameter(nD,Hp);             % disturbance - rain inflow
 X0 = opti.parameter(nS);                % initial state - level
 U0 = opti.parameter(nU);                % the previous control
-S0 = opti.parameter(nT); 
+S0 = opti.parameter(nT);
+D0 = opti.parameter(nD);
 T  = opti.parameter(1);                 % MPC model_level sampling time
 Reference  = opti.parameter(nS,Hp);        % reference
 
@@ -83,27 +84,29 @@ opti.minimize(objective);
 x = casadi.MX.sym('x',nS);              % state
 uk = casadi.MX.sym('uk',nU);              % input
 ukm1 = casadi.MX.sym('ukm1',nU);              % old input
-d = casadi.MX.sym('d',nD);              % disturbance
+dk = casadi.MX.sym('dk',nD);              % disturbance
+dkm1 = casadi.MX.sym('dkm1',nD);              % disturbance
 uofk = casadi.MX.sym('uofk',nT); 
 uofkm1 = casadi.MX.sym('uofkm1',nT); 
 
 A       = BuildAContinues(nS, p, phi);                                           % builds two tank topology with nS-2 pipe sections
 Ad      = BuildA(nS, p, phi, Ts);
 B       = BuildBContinues(nS, p, phi);
-Bd      = BuildBdContinues(nS,2,p,phi);                                           % allows d to enter in tank1 and in pipe section 2
+Bd      = BuildBdContinues(nS,2,p,phi);                                          % allows d to enter in tank1 and in pipe section 2
 Bof     = BuildBofContinues(nS,phi);
 Delta   = BuildDeltaContinues(nS, p);
 
 [Bk,Bkm1]       = ComputationTimeCompensationB(A,B,Ts,tau);
-[Bd]            = BuildBd(nS,2,p,phi,Ts);
-[Bofk,Bofkm1]   = ComputationTimeCompensationB(A,B,Ts,tau);
+[Bdk,Bdkm1]       = ComputationTimeCompensationB(A,Bd,Ts,tau);
+[Bofk,Bofkm1]   = ComputationTimeCompensationB(A,Bof,Ts,tau);
 [Deltak,Deltakm1]       = ComputationTimeCompensationDelta(A,Delta,Ts,tau);
 newDelta = Deltak+Deltakm1;
 
+
 % function
-system_dynamics_compensated = Ad*x + Bk*uk + Bkm1*ukm1 + Bofk*uofk + Bofkm1*uofkm1 + Bd*d + newDelta;
+system_dynamics_compensated = Ad*x + Bk*uk + Bkm1*ukm1 + Bofk*uofk + Bofkm1*uofkm1 + Bdk*dk + Bdkm1*dkm1 + newDelta;
 % Discrete dynamics
-F_system = casadi.Function('F_DW', {x, uk, ukm1, d, uofk, uofkm1}, {system_dynamics_compensated}, {'x[k]', 'u[k]','u[k-1]', 'd[k]', 'uof[k]','uof[k-1]'}, {'x[k+1]'});
+F_system = casadi.Function('F_DW', {x, uk, ukm1, dk, dkm1, uofk, uofkm1}, {system_dynamics_compensated}, {'x[k]', 'u[k]','u[k-1]', 'd[k]','d[k-1]', 'uof[k]','uof[k-1]'}, {'x[k+1]'});
 
 % make struct to get when MPC is run
 sys = struct('Ts',Ts);
@@ -122,10 +125,10 @@ end
 for i=1:Hp
    if i == 1
        opti.subject_to(deltaU(:,i)==U(:,i) - U0)
-       opti.subject_to(X(:,i+1)==F_system(X(:,i), U(:,i), U0, D(:,i), S(:,i), S0));
+       opti.subject_to(X(:,i+1)==F_system(X(:,i), U(:,i), U0, D(:,i), D0, S(:,i), S0));
    else
        opti.subject_to(deltaU(:,i)==U(:,i) - U(:,i-1));
-       opti.subject_to(X(:,i+1)==F_system(X(:,i), U(:,i), U(:,i-1), D(:,i), S(:,i), S(:,i-1)));
+       opti.subject_to(X(:,i+1)==F_system(X(:,i), U(:,i), U(:,i-1), D(:,i), D(:,i-1), S(:,i), S(:,i-1)));
    end
    opti.subject_to(X_lb<=X(:,i)<=X_ub);  
    
@@ -159,10 +162,10 @@ opti.solver('ipopt',opts);
 
 if warmStartEnabler == 1
     % Parametrized Open Loop Control problem with WARM START
-    OCP = opti.to_function('OCP',{X0,U0,S0,D,opti.lam_g,opti.x,Reference},{U,S,opti.lam_g,opti.x},{'x0','u0','s0','d','lam_g','x_init','ref'},{'u_opt','s_opt','lam_g','x_init'});
+    OCP = opti.to_function('OCP',{X0,U0,S0,D,D0,opti.lam_g,opti.x,Reference},{U,S,opti.lam_g,opti.x},{'x0','u0','s0','d','d0','lam_g','x_init','ref'},{'u_opt','s_opt','lam_g','x_init'});
 elseif warmStartEnabler == 0
     % Parametrized Open Loop Control problem without WARM START 
-    OCP = opti.to_function('OCP',{X0,U0,S0,D,Reference},{U,S,S_ub},{'x0','u0','s0','d','ref'},{'u_opt','s_opt'});
+    OCP = opti.to_function('OCP',{X0,U0,S0,D,D0,Reference},{U,S,S_ub},{'x0','u0','s0','d','d0','ref'},{'u_opt','s_opt'});
 end
 
 %load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');
