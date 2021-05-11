@@ -47,7 +47,7 @@ hold on;
 % hold on;
 % Plot slacks
 %plot(time:dT:time+dT*Hp-dT,Overflow(tank_select,:),'magenta');
-leg = legend('Past level', 'Predicted level', 'Location','southeast');
+leg = legend('Past level', 'Predicted level', 'Location','northeast');
 set(leg,'Interpreter','latex');
 ylim([0,7.5]);
 xlabel('k','Interpreter','latex');
@@ -72,7 +72,7 @@ stairs(time:dT:time+dT*Hp-dT,Overflow(tank_select,:)*60,'g','LineWidth',1.75);
 hold on;
 stairs(time:dT:time+dT*Hp-dT,tank2_inflow(1,1:end-1),'k','LineWidth',1.75);
 hold on;
-leg = legend('Past action','Predicted action','Overflow','Location','northwest');
+leg = legend('Past action','Predicted action','Overflow','Location','northeast');
 set(leg,'Interpreter','latex');
 ylim([0,25]);
 xlabel('k','Interpreter','latex');

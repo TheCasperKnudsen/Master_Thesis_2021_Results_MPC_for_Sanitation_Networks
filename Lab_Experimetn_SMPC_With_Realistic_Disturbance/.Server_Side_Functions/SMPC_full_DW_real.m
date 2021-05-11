@@ -65,7 +65,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     %Create forcast from disturbance reference
     disturbance = zeros(2,Hp);
     reference = zeros(10,Hp);
-    reference(1:9:10,:) = 2;
+    reference(1:9:10,:) = 3;
     for i=0:1:Hp-1
         start_index = time+1+i*dT*simulink_frequency;
         end_index = start_index+dT*simulink_frequency-1;
@@ -88,12 +88,11 @@ function [output]  = SMPC_full_DW_real(X0,time)
     % run openloop MPC
     if warmStartEnabler == 1
         % Parametrized Open Loop Control problem with WARM START
-        [u , S, S_ub, lam_g, x_init] = (OCP(X0,U0,disturbance, lam_g, x_init, dT,reference,Ub_adjust, sigma_x,sigma_u));
+        [u , S, S_ub, lam_g, x_init,Obj] = (OCP(X0,U0,disturbance, lam_g, x_init, dT,reference,Ub_adjust, sigma_x,sigma_u));
     elseif warmStartEnabler == 0
         % Parametrized Open Loop Control problem without WARM START 
-        [u , S, S_ub] = (OCP(X0 ,U0, disturbance, dT, reference,Ub_adjust,sigma_x,sigma_u));
+        [u , S, S_ub,Obj] = (OCP(X0 ,U0, disturbance, dT, reference,Ub_adjust,sigma_x,sigma_u));
     end
-
     % Get numeric values for results
     u_full = full(u);
     S_full = full(S);
@@ -111,7 +110,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     
     % Augmenting the output for plotting
     output = [client_output; ...
-        u_full(1,:)';u_full(2,:)';S_full(1,:)';S_full(2,:)';S_ub_full(1,:)';S_ub_full(2,:)'; Ub_adjust];
+        u_full(1,:)';u_full(2,:)';S_full(1,:)';S_full(2,:)';S_ub_full(1,:)';S_ub_full(2,:)'; full(Obj); Ub_adjust;];
 
     % Set vairables for next iteration and make sure they don't break the
     % bounds.

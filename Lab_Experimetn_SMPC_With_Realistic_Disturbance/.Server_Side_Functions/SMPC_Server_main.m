@@ -18,6 +18,10 @@ Control_input_pumps = zeros(2,Hp);
 Overflow = zeros(2,Hp);
 Tightening = zeros(2,Hp);
 
+saveFile = matfile('Saved_predictions.mat', 'Writable', true); %Note: writable is true by default IF the file does not exist
+saveToIndex = 1;
+saveContainer = zeros(7,Hp);
+
 %%
 number_of_receiving_data = 11;
 number_of_sending_data = 8;
@@ -39,8 +43,13 @@ display('Server is running!')
 while(1)
     ModBusTCP = openConnectionServer(Client_IP, Port_Number)
     %Modbus server
+    disp = 0;
     while ~ModBusTCP.BytesAvailable
         %wait for the response to be in the buffer
+        if disp == 0;
+            display('idle');
+            disp = 1;
+        end
     end
     
     %Save old measurements
@@ -70,6 +79,14 @@ while(1)
         
         Tightening(1,:) = output(9+4*Hp:9+5*Hp-1,:)';
         Tightening(2,:) = output(9+5*Hp:9+6*Hp-1,:)';
+        
+        Cost = output(end-2,:);
+        
+        % Save the data:
+        saveContainer = [Control_input_pumps;Overflow;Tightening;Cost*ones(1,size(Tightening,2))];
+        saveFile.out(saveToIndex:saveToIndex+6, 1:Hp) = saveContainer;
+        saveToIndex = saveToIndex+6;
+        
         
         adjustment = output(end-1:end,:);
         X_ref = output(5:6,:);

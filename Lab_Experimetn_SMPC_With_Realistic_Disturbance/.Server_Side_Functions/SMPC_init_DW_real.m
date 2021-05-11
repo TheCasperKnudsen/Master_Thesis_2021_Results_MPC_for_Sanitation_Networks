@@ -10,7 +10,7 @@ import casadi.*
 
 
 %% ============================================== MPC. setup ===================================
-Hp = 24;                                % prediction horizon   
+Hp = 48;                                % prediction horizon   
 Hu = Hp;                                % control horizion
 nT = 2;                                 % number of tanks
 nP = 8;                                 % number of pipe sections
@@ -21,16 +21,16 @@ opti = casadi.Opti();                   % opti stack
 warmStartEnabler = 1;                   % warmstart for optimization
 %% ============================================ Constraint limits ==============================
 % Input bounds - Devide by 60 to get L/sec
-U_ub   = [8.3;15]/60;                   
+U_ub   = [8;13]/60;                   
 U_lb   = [3.4;6]/60;
-dU_ub  = [4.5;4.5]/60;
-dU_lb  = [-4.5;-4.5]/60;
+dU_ub  = [1;0.3]/60;
+dU_lb  = [-1;-0.3]/60;
 
 % State bounds Tank
 Xt_1_ub  = 6.99;                          
 Xt_2_ub  = 6.50;            % New tank2 upper bound   
 % State bounds pipes
-Xt_lb  = 1.8;
+Xt_lb  = 1.5;
 Xp_ub  = 0.5;                                                     
 Xp_lb  = -10;
 % Combine into state bounds
@@ -71,9 +71,11 @@ sum_vector = zeros(nT * Hp,1)+1;
 P = eye(nT * Hp,nT * Hp) + Decreasing_cost;
 Q = zeros(nS, nS);
 Q(1,1) = 10;                                                               % cost of tank1 state
-Q(nS,nS) = 10;                                                               % cost of tank2 state               
+Q(nS,nS) = 10;                                                             % cost of tank2 state               
 Q = kron(eye(Hp),Q);
-R = eye(nU * Hp,nU * Hp) * 1;
+R = zeros(nU, nU);
+R(nU,nU) = 50;                                                                       
+R = kron(eye(Hp),R);
 
 % Rearrange X and U
 X_obj = vertcatComplete( X(:,1:end-1) - Reference);
@@ -178,19 +180,19 @@ end
 
 % Solver options
 opts = struct;
-% opts.ipopt.print_level = 0;                                                     % print enabler to command line
-% opts.print_time = false;
-opts.expand = true;                                                             % makes function evaluations faster
+opts.ipopt.print_level = 0;                                                     % print enabler to command line
+opts.print_time = false;
+opts.expand = false;                                                             % makes function evaluations faster
 %opts.ipopt.hessian_approximation = 'limited-memory';
 opts.ipopt.max_iter = 100;                                                      % max solver iteration
 opti.solver('ipopt',opts);         
 
 if warmStartEnabler == 1
     % Parametrized Open Loop Control problem with WARM START
-    OCP = opti.to_function('OCP',{X0,U0,D,opti.lam_g,opti.x,T,Reference,Ub_adjust, sigma_X,sigma_U},{U,S,S_ub,opti.lam_g,opti.x},{'x0','u0','d','lam_g','x_init','dt','ref','ub_adjustment','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt','lam_g','x_init'});
+    OCP = opti.to_function('OCP',{X0,U0,D,opti.lam_g,opti.x,T,Reference,Ub_adjust, sigma_X,sigma_U},{U,S,S_ub,opti.lam_g,opti.x,objective},{'x0','u0','d','lam_g','x_init','dt','ref','ub_adjustment','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt','lam_g','x_init','Obj'});
 elseif warmStartEnabler == 0
     % Parametrized Open Loop Control problem without WARM START 
-    OCP = opti.to_function('OCP',{X0,U0,D,T,Reference,Ub_adjust, sigma_X,sigma_U},{U,S,S_ub},{'x0','u0','d','dt','ref','ub_adjustment','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt'});
+    OCP = opti.to_function('OCP',{X0,U0,D,T,Reference,Ub_adjust, sigma_X,sigma_U},{U,S,S_ub,objective},{'x0','u0','d','dt','ref','ub_adjustment','sigma_x','sigma_u'},{'u_opt','s_opt','S_ub_opt','Obj'});
 end
 
 %load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');
