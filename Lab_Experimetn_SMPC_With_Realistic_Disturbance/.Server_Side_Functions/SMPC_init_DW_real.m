@@ -17,7 +17,8 @@ nP = 8;                                 % number of pipe sections
 nS = nT + nP;                           % number of states
 nU = 2;                                 % number of control inputs
 nD = 2;                                 % number of disturbance inputs
-opti = casadi.Opti();                   % opti stack 
+opti = casadi.Opti();                   % opti stack
+%opti=Opti('conic');                     % Conic stack 
 warmStartEnabler = 1;                   % warmstart for optimization
 %% ============================================ Constraint limits ==============================
 % Input bounds - Devide by 60 to get L/sec
@@ -179,13 +180,19 @@ end
 %opti.set_inivar_x_prev = casadi.MX.sym('x',nS,nS);tial(U, U_lb);
 
 % Solver options
-opts = struct;
-opts.ipopt.print_level = 0;                                                     % print enabler to command line
-opts.print_time = false;
-opts.expand = false;                                                             % makes function evaluations faster
-%opts.ipopt.hessian_approximation = 'limited-memory';
-opts.ipopt.max_iter = 100;                                                      % max solver iteration
+opts = struct;                                                     % print enabler to command line
+%opts.print_time = false;
+opts.expand = true;    
+
+% Ipopsolver 
+opts.ipopt.print_level = 0;
+opts.ipopt.max_iter = 100;
 opti.solver('ipopt',opts);         
+
+% opts.qpsol = 'qrqp';     
+% opti.solver('sqpmethod',opts);
+% opts.error_on_fail = 0;
+
 
 if warmStartEnabler == 1
     % Parametrized Open Loop Control problem with WARM START

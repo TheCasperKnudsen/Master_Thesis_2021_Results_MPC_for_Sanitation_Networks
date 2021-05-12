@@ -37,11 +37,11 @@ function [output]  = SMPC_full_DW_real(X0,time)
 
         warmStartEnabler = evalin('base','warmStartEnabler');
         lam_g = 1;
-        x_init = 0.001;
+        x_init = 1;
 
 
         % Initialize MPC inputs
-        U0 = [3;4.5];
+        U0 = [3.4;6];
         X_pre = X0/100;
 
         % Get disturbance mean and variance - Used in make sigma_X_real

@@ -4,7 +4,7 @@ clc;
 SMPC_init_DW_real
 
 % Enable/Disable plotting 
-plotting = true;
+plotting = false;
 
 if plotting 
     figure
@@ -35,32 +35,29 @@ DataBaseInput = uint16(zeros(1,number_of_sending_data*4));
 % Ignore Coils
 DataBaseCoils = logical(0);
 
-Client_IP = 'localhost';
+Client_IP = '192.168.100.246';
 Port_Number = 502;
-
 display('Server is running!')
-
 while(1)
-    ModBusTCP = openConnectionServer(Client_IP, Port_Number)
+    ModBusTCP = openConnectionServer(Client_IP, Port_Number);
     %Modbus server
-    disp = 0;
     while ~ModBusTCP.BytesAvailable
         %wait for the response to be in the buffer
-        if disp == 0;
-            display('idle');
-            disp = 1;
-        end
     end
-    
     %Save old measurements
     oldDataBaseHolding = DataBaseHolding;
     
     %Handle new request
     [DataBaseInput,DataBaseHolding] = handleRequest(ModBusTCP, ...
                               DataBaseInput,DataBaseHolding,DataBaseCoils);
-   
+    fclose(ModBusTCP);
+    
     %MPC
     if(any(oldDataBaseHolding ~= DataBaseHolding))
+        clc
+        display('Computing MPC');
+        
+        tic
         Updated_Measurements_data = unit16Be2doubleLe(DataBaseHolding);
       
         %Run MPC
@@ -95,10 +92,9 @@ while(1)
         data2Send = flip(send2Client_output');
         DataBaseInput = flip(typecast(data2Send,'uint16'));
         
-        if plotting
-            PredictionPlotter
-        end
+%         if plotting
+%             PredictionPlotter
+%         end
+        toc
     end
-    
-    fclose(ModBusTCP);
 end 
