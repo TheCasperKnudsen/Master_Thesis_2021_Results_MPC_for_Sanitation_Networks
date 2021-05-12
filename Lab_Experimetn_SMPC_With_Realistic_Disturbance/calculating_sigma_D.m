@@ -3,7 +3,7 @@ load('Lab_Experimetn_SMPC_With_Realistic_Disturbance/Data/D_sim_ens');
 
 %% ======== Setup for MPC =========
 D_sim_ens = D_sim_ens/60;
-Hp = 24;
+Hp = 108;
 dT = 5;     %seconds
 simulink_frequency = 2;   %1/s
 
