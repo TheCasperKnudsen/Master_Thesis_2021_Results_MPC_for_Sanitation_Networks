@@ -1,6 +1,11 @@
 function [MPCOutput] = requestFromServer()
-
-    ModBusTCP = openConnectionClient('192.168.100.246', 502); %open the connection
+    persistent ModBusTCP
+    
+    if isempty(ModBusTCP)
+        eml.extrinsic('evalin');
+        ModBusTCP = evalin('base','ModBusTCP');
+    end
+    %ModBusTCP = openConnectionClient('192.168.100.246', 502); %open the connection
 
     transIDHi= uint8(randi(256));%8 bits transaction identifier
     transIDLow = uint8(randi(256));
