@@ -18,7 +18,7 @@ Control_input_pumps = zeros(2,Hp);
 Overflow = zeros(2,Hp);
 Tightening = zeros(2,Hp);
 
-saveFile = matfile('Saved_predictions.mat', 'Writable', true); %Note: writable is true by default IF the file does not exist
+saveFile = matfile(strcat('Saved_predictions',date,'.mat'), 'Writable', true); %Note: writable is true by default IF the file does not exist
 saveToIndex = 1;
 saveContainer = zeros(7,Hp);
 
@@ -38,8 +38,9 @@ DataBaseCoils = logical(0);
 Client_IP = '192.168.100.246';
 Port_Number = 502;
 display('Server is running!')
+ModBusTCP = openConnectionServer(Client_IP, Port_Number);
+display('Connection made')
 while(1)
-    ModBusTCP = openConnectionServer(Client_IP, Port_Number);
     %Modbus server
     while ~ModBusTCP.BytesAvailable
         %wait for the response to be in the buffer
@@ -50,8 +51,7 @@ while(1)
     %Handle new request
     [DataBaseInput,DataBaseHolding] = handleRequest(ModBusTCP, ...
                               DataBaseInput,DataBaseHolding,DataBaseCoils);
-    fclose(ModBusTCP);
-    
+
     %MPC
     if(any(oldDataBaseHolding ~= DataBaseHolding))
         clc
@@ -98,3 +98,4 @@ while(1)
         toc
     end
 end 
+fclose(ModBusTCP);

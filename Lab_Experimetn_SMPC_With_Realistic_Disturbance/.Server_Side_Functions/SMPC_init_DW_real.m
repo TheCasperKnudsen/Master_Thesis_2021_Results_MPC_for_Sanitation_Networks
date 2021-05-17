@@ -10,7 +10,7 @@ import casadi.*
 
 
 %% ============================================== MPC. setup ===================================
-Hp = 48;                                % prediction horizon   
+Hp = 108;                                % prediction horizon   
 Hu = Hp;                                % control horizion
 nT = 2;                                 % number of tanks
 nP = 8;                                 % number of pipe sections
@@ -22,10 +22,10 @@ opti = casadi.Opti();                   % opti stack
 warmStartEnabler = 1;                   % warmstart for optimization
 %% ============================================ Constraint limits ==============================
 % Input bounds - Devide by 60 to get L/sec
-U_ub   = [8;13]/60;                   
+U_ub   = [8;13.2]/60;                   
 U_lb   = [3.4;6]/60;
-dU_ub  = [1;0.3]/60;
-dU_lb  = [-1;-0.3]/60;
+dU_ub  = [0.5;0.0667]/60;
+dU_lb  = [-0.5;-0.0667]/60;
 
 % State bounds Tank
 Xt_1_ub  = 6.99;                          

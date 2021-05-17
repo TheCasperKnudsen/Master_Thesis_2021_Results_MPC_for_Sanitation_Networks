@@ -1,7 +1,12 @@
 function send2Server(measurements, time)
     %persistent ModBusTCP
-    ModBusTCP = openConnectionClient('192.168.100.246' , 502); %open the connection
-
+    %ModBusTCP = openConnectionClient('192.168.100.246' , 502); %open the connection
+    persistent ModBusTCP
+    
+    if isempty(ModBusTCP)
+        eml.extrinsic('evalin');
+        ModBusTCP = evalin('base','ModBusTCP');
+    end
     
     %16 bits transaction identifier
     transIDHi= uint8(randi(256));%8 bits transaction identifier
@@ -23,4 +28,14 @@ function send2Server(measurements, time)
     message = [transIDHi; transIDLow; int8(0); ProtID; int8(0); Lenght; UnitID; FunCod; int8(0); Address_offset; int8(0); reg_number; byteToFollow; measuremntData; timeData];
 
     fwrite(ModBusTCP, message,'uint8');
+    
+    %Disregard responce
+    while ~ModBusTCP.BytesAvailable
+    end
+    
+    while ModBusTCP.BytesAvailable
+        debug = fread8Bit(ModBusTCP);
+    end
+    
+    
 end
