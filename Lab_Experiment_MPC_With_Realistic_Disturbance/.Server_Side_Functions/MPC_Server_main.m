@@ -3,6 +3,14 @@ clear all;
 clc;
 MPC_init_DW_real
 
+% Initialize output variables
+Control_input_pumps = zeros(2,Hp);
+Overflow = zeros(2,Hp);
+Tightening = zeros(2,Hp);
+
+saveFile = matfile(strcat('Saved_predictions_MPC',date,'.mat'), 'Writable', true); %Note: writable is true by default IF the file does not exist
+saveToIndex = 1;
+saveContainer = zeros(7,Hp);
 
 %%
 number_of_receiving_data = 11;
@@ -17,13 +25,12 @@ DataBaseInput = uint16(zeros(1,number_of_sending_data*4));
 % Ignore Coils
 DataBaseCoils = logical(0);
 
-Client_IP = 'localhost';
+Client_IP = '192.168.100.246';
 Port_Number = 502;
-
 display('Server is running!')
-
+ModBusTCP = openConnectionServer(Client_IP, Port_Number);
+display('Connection made')
 while(1)
-    ModBusTCP = openConnectionServer(Client_IP, Port_Number)
     %Modbus server
     while ~ModBusTCP.BytesAvailable
         %wait for the response to be in the buffer
@@ -38,6 +45,10 @@ while(1)
    
     %MPC
     if(any(oldDataBaseHolding ~= DataBaseHolding))
+        clc
+        display('Computing MPC');
+        
+        tic
         Updated_Measurements_data = unit16Be2doubleLe(DataBaseHolding);
       
         %Run MPC
@@ -45,16 +56,32 @@ while(1)
         time = Updated_Measurements_data(1,11);
         
         output = MPC_full_DW_real(X0, time); 
+        send2Client_output = output(1:8,:);
         
-%         U = output(1:2,:);
-%         Overflow = output(3:4,:);
-%         X_ref = output(5:6,:);
-%         S_ub = output(7:8,:);
+        %Seperate the output into variables
+        Control_input_pumps(1,:) = output(9:9+Hp-1,:)';
+        Control_input_pumps(2,:) = output(9+Hp:9+2*Hp-1,:)';
+        
+        Overflow(1,:) = output(9+2*Hp:9+3*Hp-1,:)';
+        Overflow(2,:) = output(9+3*Hp:9+4*Hp-1,:)';
+        
+        Tightening(1,:) = output(9+4*Hp:9+5*Hp-1,:)';
+        Tightening(2,:) = output(9+5*Hp:9+6*Hp-1,:)';
+        
+        Cost = output(end-2,:);
+        
+        % Save the data:
+        saveContainer = [Control_input_pumps;Overflow;Tightening;Cost*ones(1,size(Tightening,2))];
+        saveFile.out(saveToIndex:saveToIndex+6, 1:Hp) = saveContainer;
+        saveToIndex = saveToIndex+6;
+        
+        adjustment = output(end-1:end,:);
+        X_ref = output(5:6,:);
         
         %Prepare calculations for sending to client
-        data2Send = flip(output');
+        data2Send = flip(send2Client_output');
         DataBaseInput = flip(typecast(data2Send,'uint16'));
+        toc
     end
-    
-    fclose(ModBusTCP);
 end 
+fclose(ModBusTCP);

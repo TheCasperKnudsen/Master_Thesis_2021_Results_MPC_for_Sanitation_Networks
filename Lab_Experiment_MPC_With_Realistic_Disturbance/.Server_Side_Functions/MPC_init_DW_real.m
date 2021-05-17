@@ -10,7 +10,7 @@ import casadi.*
 
 
 %% ============================================== MPC. setup ===================================
-Hp = 24;                                % prediction horizon   
+Hp = 108;                                % prediction horizon   
 Hu = Hp;                                % control horizion
 nT = 2;                                 % number of tanks
 nP = 8;                                 % number of pipe sections
@@ -21,13 +21,13 @@ opti = casadi.Opti();                   % opti stack
 warmStartEnabler = 1;                   % warmstart for optimization
 %% ============================================ Constraint limits ==============================
 % Input bounds - Devide by 60 to get L/sec
-U_ub   = [8.3;15]/60;                   
+U_ub   = [8.3;13.2]/60;                   
 U_lb   = [3.4;6]/60;
-dU_ub  = [4.5;4.5]/60;
-dU_lb  = [-4.5;-4.5]/60;
+dU_ub  = [0.5;0.0667]/60;
+dU_lb  = [-0.5;-0.0667]/60;
 % State bounds Tank
-Xt_1_ub  = 7.02;                          
-Xt_2_ub  = 6.43;  
+Xt_1_ub  = 6.99;                          
+Xt_2_ub  = 6.50;  
 % State bounds pipes
 Xt_lb  = 1.5;
 Xp_ub  = 0.5;                                                     
@@ -47,6 +47,7 @@ D  = opti.parameter(nD,Hp);             % disturbance - rain inflow
 X0 = opti.parameter(nS);                % initial state - level
 U0 = opti.parameter(nU);                % the previous control
 T  = opti.parameter(1);                 % MPC model_level sampling time
+Ub_adjust = opti.parameter(nT);
 Reference  = opti.parameter(nS,Hp);        % reference
 
 %% ====================================== System parameters ====================================
@@ -55,14 +56,21 @@ phi = [1/4.908738521234052,1/4.908738521234052];
 
 %% =========================================== Objective =======================================
 % Weights
-Decreasing_cost = diag((nT*Hp):-1:1)*1000000000;
+tankWight = zeros((nT*Hp),1);
+tankWight(2:2:end) = 1;
+tankWight(1:2) = tankWight(1:2)  + 10;
+tankWight = tankWight + ((nT*Hp):-1:1)';
+Decreasing_cost = diag(tankWight) * 1000;
+
 sum_vector = zeros(nT * Hp,1)+1;
 P = eye(nT * Hp,nT * Hp) + Decreasing_cost;
 Q = zeros(nS, nS);
-Q(1,1) = 1;                                                                 % cost of tank1 state
-Q(nS,nS) = 1;                                                               % cost of tank2 state               
+Q(1,1) = 10;                                                               % cost of tank1 state
+Q(nS,nS) = 10;                                                             % cost of tank2 state               
 Q = kron(eye(Hp),Q);
-R = eye(nU * Hp,nU * Hp) * 0.1;
+R = zeros(nU, nU);
+R(nU,nU) = 50;                                                                       
+R = kron(eye(Hp),R);
 
 % Rearrange X and U
 X_obj = vertcatComplete( X(:,1:end-1) - Reference);
@@ -146,15 +154,16 @@ opts = struct;
 % opts.print_time = false;
 opts.expand = true;                                                             % makes function evaluations faster
 %opts.ipopt.hessian_approximation = 'limited-memory';
-opts.ipopt.max_iter = 100;                                                      % max solver iteration
+opts.ipopt.print_level = 0;
+opts.ipopt.max_iter = 100;
 opti.solver('ipopt',opts);         
 
 if warmStartEnabler == 1
     % Parametrized Open Loop Control problem with WARM START
-    OCP = opti.to_function('OCP',{X0,U0,D,opti.lam_g,opti.x,T,Reference},{U,S,opti.lam_g,opti.x},{'x0','u0','d','lam_g','x_init','dt','ref'},{'u_opt','s_opt','lam_g','x_init'});
+    OCP = opti.to_function('OCP',{X0,U0,D,opti.lam_g,opti.x,T,Reference,Ub_adjust},{U,S,opti.lam_g,opti.x,objective},{'x0','u0','d','lam_g','x_init','dt','ref','ub_adjustment'},{'u_opt','s_opt','lam_g','x_init','Obj'});
 elseif warmStartEnabler == 0
     % Parametrized Open Loop Control problem without WARM START 
-    OCP = opti.to_function('OCP',{X0,U0,D,T,Reference},{U,S,S_ub},{'x0','u0','d','dt','ref'},{'u_opt','s_opt'});
+    OCP = opti.to_function('OCP',{X0,U0,D,T,Reference,Ub_adjust},{U,S,objective},{'x0','u0','d','dt','ref','ub_adjustment'},{'u_opt','s_opt','Obj'});
 end
 
 %load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');
