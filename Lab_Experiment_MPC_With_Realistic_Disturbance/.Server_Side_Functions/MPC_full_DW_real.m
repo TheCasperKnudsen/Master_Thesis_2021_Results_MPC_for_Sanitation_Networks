@@ -1,4 +1,4 @@
-function [clientoutput]  = SMPC_full_DW_real(X0,time)
+function [client_output]  = SMPC_full_DW_real(X0,time)
     eml.extrinsic('evalin');
 
     % Define persistent variables and constants.
@@ -79,9 +79,9 @@ function [clientoutput]  = SMPC_full_DW_real(X0,time)
     S_full = full(S);
 
     % Create output
-    clientoutput = [u_full(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
+    client_output = [u_full(:,1); S_full(:,1)]*60;             % Scale outputs form L/s (MPC) to L/m (pump)
     tank_ref = [reference(1,1);reference(end,1)]*100;   % Scale reference form dm (MPC) to mm (Lab)
-    clientoutput = [clientoutput; tank_ref; 0; 0];
+    client_output = [client_output; tank_ref; 0; 0];
 
     % Augmenting the output for plotting
     output = [client_output; ...
