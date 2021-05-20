@@ -20,7 +20,8 @@ Tightening = zeros(2,Hp);
 
 saveFile = matfile(strcat('Saved_predictions',date,'.mat'), 'Writable', true); %Note: writable is true by default IF the file does not exist
 saveToIndex = 1;
-saveContainer = zeros(7,Hp);
+container_data_points = 7;
+saveContainer = zeros(container_data_points,Hp);
 
 %%
 number_of_receiving_data = 11;
@@ -81,8 +82,8 @@ while(1)
         
         % Save the data:
         saveContainer = [Control_input_pumps;Overflow;Tightening;Cost*ones(1,size(Tightening,2))];
-        saveFile.out(saveToIndex:saveToIndex+6, 1:Hp) = saveContainer;
-        saveToIndex = saveToIndex+6;
+        saveFile.out(saveToIndex:saveToIndex+container_data_points-1, 1:Hp) = saveContainer;
+        saveToIndex = saveToIndex+container_data_points;
         
         
         adjustment = output(end-1:end,:);
