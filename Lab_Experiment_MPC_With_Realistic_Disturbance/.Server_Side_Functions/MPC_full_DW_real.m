@@ -1,4 +1,4 @@
-function [client_output]  = SMPC_full_DW_real(X0,time)
+function [output]  = SMPC_full_DW_real(X0,time)
     eml.extrinsic('evalin');
 
     % Define persistent variables and constants.
