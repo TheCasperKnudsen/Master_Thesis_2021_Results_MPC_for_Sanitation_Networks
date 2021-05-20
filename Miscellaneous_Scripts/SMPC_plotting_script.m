@@ -59,7 +59,7 @@ pump2_flow = 9;
 
 figure
 
-ax(1) = subplot(3,2,1);
+ax(1) = subplot(3,1,1);
 plot(data(pump1_aux_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump1_aux_flow,startDataIndex:endDataIndex));
@@ -74,22 +74,7 @@ ylim([4.5,14]);
 set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
 %
-ax(2) = subplot(3,2,2);
-plot(data(pump2_aux_ref,startDataIndex:endDataIndex));
-hold on
-plot(data(pump2_aux_flow,startDataIndex:endDataIndex));
-leg = legend('$d_{2}$ reference', '$d_{2}$ flow');
-set(leg,'Interpreter','latex');
-xlim([0, endDataIndex-1]);
-ttl = title('Disturbance in the middle of the pipe','interpreter','latex');
-ttl.FontSize = Font_scale;
-leg.FontSize = Font_scale;
-y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
-ylim([2.5,17]);
-set(y_lab, 'FontSize', Font_scale);
-set(gca,'FontSize',Font_scale);
-%
-ax(3) = subplot(3,2,3);
+ax(3) = subplot(3,1,2);
 plot(data(tank1_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank1_mes,startDataIndex:endDataIndex));
@@ -108,7 +93,44 @@ ylim([130,710]);
 set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
 %
-ax(4) = subplot(3,2,4);
+%
+ax(5) = subplot(3,1,3);
+plot(data(pump1_ref,startDataIndex:endDataIndex));
+hold on
+plot(data(pump1_flow,startDataIndex:endDataIndex));
+leg = legend('$q_{1}$ reference', '$q_{1}$ flow');
+set(leg,'Interpreter','latex');
+xlim([0, endDataIndex-1]);
+ttl = title('Pump 1','interpreter','latex')
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex'); %or h=get(gca,'xlabel')
+set(x_lab, 'FontSize', Font_scale);
+y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
+ylim([2,10]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
+%
+%
+
+figure 
+
+ax(2) = subplot(3,1,1);
+plot(data(pump2_aux_ref,startDataIndex:endDataIndex));
+hold on
+plot(data(pump2_aux_flow,startDataIndex:endDataIndex));
+leg = legend('$d_{2}$ reference', '$d_{2}$ flow');
+set(leg,'Interpreter','latex');
+xlim([0, endDataIndex-1]);
+ttl = title('Disturbance in the middle of the pipe','interpreter','latex');
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
+ylim([2.5,17]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
+%
+ax(4) = subplot(3,1,2);
 plot(data(tank2_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank2_mes,startDataIndex:endDataIndex));
@@ -127,24 +149,7 @@ ylim([130,710]);
 set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
 %
-ax(5) = subplot(3,2,5);
-plot(data(pump1_ref,startDataIndex:endDataIndex));
-hold on
-plot(data(pump1_flow,startDataIndex:endDataIndex));
-leg = legend('$q_{1}$ reference', '$q_{1}$ flow');
-set(leg,'Interpreter','latex');
-xlim([0, endDataIndex-1]);
-ttl = title('Pump 1','interpreter','latex')
-ttl.FontSize = Font_scale;
-leg.FontSize = Font_scale;
-x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex'); %or h=get(gca,'xlabel')
-set(x_lab, 'FontSize', Font_scale);
-y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
-ylim([2,10]);
-set(y_lab, 'FontSize', Font_scale);
-set(gca,'FontSize',Font_scale);
-%
-ax(6) = subplot(3,2,6);
+ax(6) = subplot(3,1,3);
 plot(data(pump2_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump2_flow,startDataIndex:endDataIndex));

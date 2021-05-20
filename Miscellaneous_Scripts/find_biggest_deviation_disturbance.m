@@ -31,3 +31,11 @@ plot(D_sim_ens(21,:));
 hold on;
 plot(D_sim_ens(most_deviated_realization_indices(2),:));
 legend('Mean disturbance','Old realization', 'Most deviated realization')
+
+%% ======== Find the biggest volume ========
+
+volumes_of_disturbances = sum(D_sim_ens/30,2);
+
+[M,max_I1] = max(volumes_of_disturbances(1:10));
+[M,max_I2] = max(volumes_of_disturbances(21:30));
+most_volume_realization_indices = [max_I1;20+max_I2]
