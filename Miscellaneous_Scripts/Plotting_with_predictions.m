@@ -80,8 +80,6 @@ ax(1) = subplot(3,2,1);
 plot(data(pump1_aux_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump1_aux_flow,startDataIndex:endDataIndex));
-leg = legend('$d_{1}$ reference', '$d_{1}$ flow');
-set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
 title('Disturbance on tank 1','interpreter','latex')
 %
@@ -89,8 +87,6 @@ ax(2) = subplot(3,2,2);
 plot(data(pump2_aux_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump2_aux_flow,startDataIndex:endDataIndex));
-leg = legend('$d_{2}$ reference', '$d_{2}$ flow');
-set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
 title('Disturbance in the middle of the pipe','interpreter','latex')
 %
@@ -99,11 +95,6 @@ plot(data(tank1_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank1_mes,startDataIndex:endDataIndex));
 hold on
-plot(702*ones(1,endDataIndex-startDataIndex+1),'g--');
-hold on
-plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
-leg = legend('$T_{1}$ reference', '$T_{1}$ level');
-set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
 title('Tank 1 level','interpreter','latex')
 %
@@ -112,11 +103,6 @@ plot(data(tank2_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank2_mes,startDataIndex:endDataIndex));
 hold on
-plot(670*ones(1,endDataIndex-startDataIndex+1),'g--');
-hold on
-plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
-leg = legend('$T_{2}$ reference', '$T_{2}$ level');
-set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
 title('Tank 2 level','interpreter','latex')
 %
@@ -124,8 +110,6 @@ ax(5) = subplot(3,2,5);
 plot(data(pump1_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump1_flow,startDataIndex:endDataIndex));
-leg = legend('$q_{1}$ reference', '$q_{1}$ flow');
-set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
 title('Pump 1','interpreter','latex')
 %
@@ -133,8 +117,6 @@ ax(6) = subplot(3,2,6);
 plot(data(pump2_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump2_flow,startDataIndex:endDataIndex));
-leg = legend('$q_{2}$ reference', '$q_{2}$ flow');
-set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
 title('Pump 2','interpreter','latex')
 linkaxes(ax, 'x')
@@ -181,18 +163,36 @@ end
 X_prediction = X_prediction*100;
 Control_input_pumps = Control_input_pumps*60;
 subplot(3,2,1)
-plot(time:10:time+(Hp-1)*10,disturbance(1,:)*60,'k','LineWidth',1.75)
+plot(time:10:time+(Hp-1)*10,disturbance(1,:)*60,'k','LineWidth',1.75);
+leg = legend('$d_{1}$ reference', '$d_{1}$ flow','$d_{1}$ prediction');
+set(leg,'Interpreter','latex');
 subplot(3,2,3)
 plot(time:10:time+Hp*10,X_prediction(1,:),'k','LineWidth',1.75);
 hold on;
+plot(702*ones(1,endDataIndex-startDataIndex+1),'g--');
+hold on
+plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
+leg = legend('$T_{1}$ reference', '$T_{1}$ level', '$T_{1}$ prediction');
+set(leg,'Interpreter','latex');
 subplot(3,2,5)
 stairs(time:10:time+(Hp-1)*10,Control_input_pumps(1,:),'k','LineWidth',1.75);
+leg = legend('$q_{1}$ reference', '$q_{1}$ flow', '$q_{1}$ prediction');
+set(leg,'Interpreter','latex');
 hold on;
 subplot(3,2,2)
-plot(time:10:time+(Hp-1)*10,disturbance(2,:)*60,'k','LineWidth',1.75)
+plot(time:10:time+(Hp-1)*10,disturbance(2,:)*60,'k','LineWidth',1.75);
+leg = legend('$d_{2}$ reference', '$d_{2}$ flow','$d_{2}$ prediction');
+set(leg,'Interpreter','latex');
 subplot(3,2,4)
 plot(time:10:time+Hp*10,X_prediction(10,:),'k','LineWidth',1.75);
 hold on;
+plot(670*ones(1,endDataIndex-startDataIndex+1),'g--');
+hold on
+plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
+leg = legend('$T_{2}$ reference', '$T_{2}$ level', '$T_{2}$ prediction');
+set(leg,'Interpreter','latex');
 subplot(3,2,6)
 stairs(time:10:time+(Hp-1)*10,Control_input_pumps(2,:),'k','LineWidth',1.75);
+leg = legend('$q_{2}$ reference', '$q_{2}$ flow','$q_{2}$ prediction');
+set(leg,'Interpreter','latex');
 hold on;
