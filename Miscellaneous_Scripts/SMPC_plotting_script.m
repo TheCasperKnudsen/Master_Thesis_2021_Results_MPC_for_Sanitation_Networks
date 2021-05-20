@@ -41,6 +41,8 @@ if size(data,1) < 22
     data(22,:) = 3*100;
     data(23,:) = 3*100;
 end
+
+Font_scale = 14;
 %% ================== Plotting =======================
 pump1_aux_ref = 16;
 pump1_aux_flow = 13;
@@ -64,7 +66,13 @@ plot(data(pump1_aux_flow,startDataIndex:endDataIndex));
 leg = legend('$d_{1}$ reference', '$d_{1}$ flow');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-title('Disturbance on tank 1','interpreter','latex')
+ttl = title('Disturbance on tank 1','interpreter','latex');
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
+ylim([4.5,14]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
 %
 ax(2) = subplot(3,2,2);
 plot(data(pump2_aux_ref,startDataIndex:endDataIndex));
@@ -73,7 +81,13 @@ plot(data(pump2_aux_flow,startDataIndex:endDataIndex));
 leg = legend('$d_{2}$ reference', '$d_{2}$ flow');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-title('Disturbance in the middle of the pipe','interpreter','latex')
+ttl = title('Disturbance in the middle of the pipe','interpreter','latex');
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
+ylim([2.5,17]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
 %
 ax(3) = subplot(3,2,3);
 plot(data(tank1_ref,startDataIndex:endDataIndex));
@@ -86,7 +100,13 @@ plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
 leg = legend('$T_{1}$ reference', '$T_{1}$ level');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-title('Tank 1 level','interpreter','latex')
+ttl = title('Tank 1 level','interpreter','latex');
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+y_lab = ylabel('Tank level [$mm$]','Interpreter','Latex');
+ylim([130,710]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
 %
 ax(4) = subplot(3,2,4);
 plot(data(tank2_ref,startDataIndex:endDataIndex));
@@ -99,7 +119,13 @@ plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
 leg = legend('$T_{2}$ reference', '$T_{2}$ level');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-title('Tank 2 level','interpreter','latex')
+ttl = title('Tank 2 level','interpreter','latex')
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+y_lab = ylabel('Tank level [$mm$]','Interpreter','Latex');
+ylim([130,710]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
 %
 ax(5) = subplot(3,2,5);
 plot(data(pump1_ref,startDataIndex:endDataIndex));
@@ -108,7 +134,15 @@ plot(data(pump1_flow,startDataIndex:endDataIndex));
 leg = legend('$q_{1}$ reference', '$q_{1}$ flow');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-title('Pump 1','interpreter','latex')
+ttl = title('Pump 1','interpreter','latex')
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex'); %or h=get(gca,'xlabel')
+set(x_lab, 'FontSize', Font_scale);
+y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
+ylim([2,10]);
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
 %
 ax(6) = subplot(3,2,6);
 plot(data(pump2_ref,startDataIndex:endDataIndex));
@@ -117,5 +151,13 @@ plot(data(pump2_flow,startDataIndex:endDataIndex));
 leg = legend('$q_{2}$ reference', '$q_{2}$ flow');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-title('Pump 2','interpreter','latex')
+ylim([7,17]);
+ttl = title('Pump 2','interpreter','latex');
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
+x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex'); %or h=get(gca,'xlabel')
+set(x_lab, 'FontSize', Font_scale);
+y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
+set(y_lab, 'FontSize', Font_scale);
+set(gca,'FontSize',Font_scale);
 linkaxes(ax, 'x')
