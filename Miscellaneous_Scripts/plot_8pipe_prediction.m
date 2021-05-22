@@ -50,34 +50,49 @@ end
 %% Plot 
 Font_scale = 14;
 k = 1;
-for i = 1:8 
-    ax(i) = subplot(8,1,i)
+for i = 1:9 
+    ax(i) = subplot(9,1,i)
     
-    
-    if i == 2 | i == 4| i == 5 | i ==7
-
+    if i == 2 | i == 4 | i == 5 | i ==7
         plot(h(k,:),'b');
         hold on;
         k = k+1;
+        plot(x_est(i,:),'r');
+    elseif i == 9
+        plot(Q(3,:))
+        hold on;
+        outflow_last = level2Outflow(parameters,x_est(8,:))
+        plot(outflow_last)
+    else
+        plot(x_est(i,:),'r');
     end
-    plot(x_est(i,:),'r');
-    
+        
     if i == 8
         axis([0,40000,0,0.2])
         clear k
-    else 
+        y_lab = ylabel(['$h$' num2str(i) '[$dm$]'],'interpreter','latex');
+        set(y_lab, 'FontSize', Font_scale);
+        grid on;
+    elseif i == 9
+        y_lab = ylabel(['$Q_out$ ' '[$L/min$]'],'interpreter','latex');
+        set(y_lab, 'FontSize', Font_scale);
+        grid on;
+    else
         axis([0,40000,0,0.20])
+        y_lab = ylabel(['$h$' num2str(i) '[$dm$]'],'interpreter','latex');
+        set(y_lab, 'FontSize', Font_scale);
+        grid on;
+    end   
+
+    if i == 2
+        leg = legend('Measurements','Lin. DW Model','Location','NorthEast');
+        set(leg, 'Interpreter', 'latex');
+        leg.FontSize = Font_scale;
     end
-if i == 2
-    leg = legend('Measurements','Lin. DW Model','Location','NorthEast');
-    set(leg, 'Interpreter', 'latex');
-	leg.FontSize = Font_scale;
-end
-    y_lab = ylabel(['$h$' num2str(i) '[$dm$]'],'interpreter','latex');
-    set(y_lab, 'FontSize', Font_scale);
-    grid on;
+    
     j = j+1;
 end
+
 x_lab = xlabel(['Time [0.5 s]'],'interpreter','latex');
 set(x_lab, 'FontSize', Font_scale);
 linkaxes(ax, 'x')

@@ -31,7 +31,7 @@ DeltaT = 0.5;
 % System matrices - x(n+1) = A x(n) + B u(n) + Bd ud(n) + Delta
 A = BuildA(NumberOfStates,parameters,phi,DeltaT);
 B = BuildB(NumberOfStates,parameters,phi,DeltaT);
-Bd = BuildBd(NumberOfStates,3,parameters,phi,DeltaT);
+Bd = BuildBd(NumberOfStates,4,parameters,phi,DeltaT);
 Delta = BuildDelta(NumberOfStates, parameters,DeltaT);
 C = BuildCfor4Aug;
 % Assuming that the first tank state is uncorrelated, since it
