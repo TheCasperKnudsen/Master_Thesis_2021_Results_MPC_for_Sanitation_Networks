@@ -131,7 +131,7 @@ end
 
 %% ======= Plotting the predictions =========
 
-time = 22110;
+time = 19860;%22110;
 if mod(time,10) ~= 0 || time < 40
     warningMessage = sprintf('Warning: time has to be a factor of 10 and >= 40');
     uiwait(errordlg(warningMessage));

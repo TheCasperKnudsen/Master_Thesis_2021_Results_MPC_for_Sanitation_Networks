@@ -30,7 +30,7 @@ DeltaT = 0.5;
 % System matrices - x(n+1) = A x(n) + B u(n) + Bd ud(n) + Delta
 A = BuildA(NumberOfStates,parameters,phi,DeltaT);
 B = BuildB(NumberOfStates,parameters,phi,DeltaT);
-Bd = BuildBd(NumberOfStates,3,parameters,phi,DeltaT);
+Bd = BuildBd(NumberOfStates,4,parameters,phi,DeltaT);
 Delta = BuildDelta(NumberOfStates, parameters,DeltaT);
 C = BuildCfor4Aug;
 
@@ -48,17 +48,19 @@ for k = 1:1:experimentLength-1
 end
 
 %% Plot 
+Font_scale = 14;
 k = 1;
 for i = 1:8 
-    subplot(8,1,i)
-    plot(x_est(i,:));
+    ax(i) = subplot(8,1,i)
+    
     
     if i == 2 | i == 4| i == 5 | i ==7
+
+        plot(h(k,:),'b');
         hold on;
-        plot(h(k,:),'r');
         k = k+1;
     end
-    
+    plot(x_est(i,:),'r');
     
     if i == 8
         axis([0,40000,0,0.2])
@@ -66,4 +68,16 @@ for i = 1:8
     else 
         axis([0,40000,0,0.20])
     end
+if i == 2
+    leg = legend('Measurements','Lin. DW Model','Location','NorthEast');
+    set(leg, 'Interpreter', 'latex');
+	leg.FontSize = Font_scale;
 end
+    y_lab = ylabel(['$h$' num2str(i) '[$dm$]'],'interpreter','latex');
+    set(y_lab, 'FontSize', Font_scale);
+    grid on;
+    j = j+1;
+end
+x_lab = xlabel(['Time [0.5 s]'],'interpreter','latex');
+set(x_lab, 'FontSize', Font_scale);
+linkaxes(ax, 'x')
