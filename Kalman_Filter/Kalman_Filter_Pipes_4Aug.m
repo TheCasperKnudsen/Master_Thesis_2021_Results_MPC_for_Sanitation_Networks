@@ -12,10 +12,10 @@ persistent Qm
 
 if isempty(PredictedP)
     load('System_Identification/GravityPipe_Parameter_Estimation/results/Lat_inflow_4_aug_states_28-Apr-2021.mat','estimatedParameters','N_states','N_augmented_states');
-    load('System_Identification/Noise_Identification/Results/model_and_messurement_cov_matrices.mat','measCovPipe','modelCovPipe');
+    load('System_Identification/Noise_Identification/Results/model_and_messurement_cov_matrices.mat','measCovPipe','modelCovPipe8');
     NumberOfPipeStates = N_states + N_augmented_states;
     parameters = estimatedParameters;
-    Qm = BuildModelCovPipe4Aug(modelCovPipe);
+    Qm =modelCovPipe8; %BuildModelCovPipe4Aug(modelCovPipe);
     Rm = measCovPipe;
     PredictedP = eye(NumberOfPipeStates)*1000;
     PredictedX = [SystemMeas;SystemMeas];

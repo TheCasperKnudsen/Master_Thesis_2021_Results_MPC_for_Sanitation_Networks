@@ -9,7 +9,6 @@ clc
 
 %% Load Data
 load('System_Identification/GravityPipe_Parameter_Estimation/results/Lab_lateral_inflow_0_aug_states_21-Apr-2021.mat');
-
 TimeStep = dataTimeStep;
 startTime = 2;
 EndTime = size(data,2);

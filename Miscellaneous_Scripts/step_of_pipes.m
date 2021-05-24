@@ -17,9 +17,11 @@ x(:,1) = zeros(NumberOfPipeStates,1);
 % Paramaters identified for the lab setup
 phi = [1,1/4.908738521234052];
 maxDeltaT = 1/(parameters(2)+parameters(3))
+maxDeltaT2 = 1/(parameters(5)+ parameters(3))
 
 stepLength = 30;
-DeltaT = 8;
+DeltaT = 20;
+
 %% Free runnig estimate
 for i = 1:1:5
     
