@@ -35,15 +35,7 @@ for i=1:1:size(data,2)
 end
 endDataIndex = size(data,2);
 %%
-<<<<<<< HEAD
-load('.\Lab_Deterministic_MPC_full_system_KW\X_ref_sim.mat');
-load('.\Lab_Deterministic_MPC_full_system_KW\D_sim.mat');
-D_sim = D_sim(1:2:3,:);
-if size(data,1) < 22
-    data(22,:) = X_ref_sim(1,startDataIndex:endDataIndex)*100;
-    data(23,:) = X_ref_sim(2,startDataIndex:endDataIndex)*100;
-end
-=======
+
 load('.\Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\D_sim_ens.mat');
 D_sim = D_sim_ens(1:20:21,:);
 if size(data,1) < 22
@@ -52,7 +44,6 @@ if size(data,1) < 22
 end
 
 Font_scale = 14;
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 %% ================== Plotting =======================
 pump1_aux_ref = 16;
 pump1_aux_flow = 13;
@@ -69,31 +60,14 @@ pump2_flow = 9;
 
 figure
 
-<<<<<<< HEAD
-ax(1) = subplot(3,2,1);
-=======
+
 ax(1) = subplot(3,1,1);
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 plot(data(pump1_aux_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump1_aux_flow,startDataIndex:endDataIndex));
-leg = legend('$d_{1}$ reference', '$d_{1}$ flow');
+leg = legend('','$d_{1}$ reference', '$d_{1}$ flow');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-<<<<<<< HEAD
-title('Disturbance on tank 1','interpreter','latex')
-%
-ax(2) = subplot(3,2,2);
-plot(data(pump2_aux_ref,startDataIndex:endDataIndex));
-hold on
-plot(data(pump2_aux_flow,startDataIndex:endDataIndex));
-leg = legend('$d_{2}$ reference', '$d_{2}$ flow');
-set(leg,'Interpreter','latex');
-xlim([0, endDataIndex-1]);
-title('Disturbance in the middle of the pipe','interpreter','latex')
-%
-ax(3) = subplot(3,2,3);
-=======
 ttl = title('Disturbance on tank 1','interpreter','latex');
 ttl.FontSize = Font_scale;
 leg.FontSize = Font_scale;
@@ -103,7 +77,6 @@ set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
 %
 ax(3) = subplot(3,1,2);
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 plot(data(tank1_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank1_mes,startDataIndex:endDataIndex));
@@ -114,11 +87,6 @@ plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
 leg = legend('$T_{1}$ reference', '$T_{1}$ level');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-<<<<<<< HEAD
-title('Tank 1 level','interpreter','latex')
-%
-ax(4) = subplot(3,2,4);
-=======
 ttl = title('Tank 1 level','interpreter','latex');
 ttl.FontSize = Font_scale;
 leg.FontSize = Font_scale;
@@ -165,35 +133,16 @@ set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
 %
 ax(4) = subplot(3,1,2);
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 plot(data(tank2_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank2_mes,startDataIndex:endDataIndex));
 hold on
-<<<<<<< HEAD
-plot(702*ones(1,endDataIndex-startDataIndex+1),'g--');
-=======
 plot(670*ones(1,endDataIndex-startDataIndex+1),'g--');
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 hold on
 plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
 leg = legend('$T_{2}$ reference', '$T_{2}$ level');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-<<<<<<< HEAD
-title('Tank 2 level','interpreter','latex')
-%
-ax(5) = subplot(3,2,5);
-plot(data(pump1_ref,startDataIndex:endDataIndex));
-hold on
-plot(data(pump1_flow,startDataIndex:endDataIndex));
-leg = legend('$q_{1}$ reference', '$q_{1}$ flow');
-set(leg,'Interpreter','latex');
-xlim([0, endDataIndex-1]);
-title('Pump 1','interpreter','latex')
-%
-ax(6) = subplot(3,2,6);
-=======
 ttl = title('Tank 2 level','interpreter','latex')
 ttl.FontSize = Font_scale;
 leg.FontSize = Font_scale;
@@ -203,16 +152,12 @@ set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
 %
 ax(6) = subplot(3,1,3);
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 plot(data(pump2_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump2_flow,startDataIndex:endDataIndex));
 leg = legend('$q_{2}$ reference', '$q_{2}$ flow');
 set(leg,'Interpreter','latex');
 xlim([0, endDataIndex-1]);
-<<<<<<< HEAD
-title('Pump 2','interpreter','latex')
-=======
 ylim([7,17]);
 ttl = title('Pump 2','interpreter','latex');
 ttl.FontSize = Font_scale;
@@ -222,5 +167,4 @@ set(x_lab, 'FontSize', Font_scale);
 y_lab = ylabel('Flow value [$\frac{L}{min}$]','Interpreter','Latex');
 set(y_lab, 'FontSize', Font_scale);
 set(gca,'FontSize',Font_scale);
->>>>>>> 53c1bf1cf6931ae181032ad4e5bb0461197542ba
 linkaxes(ax, 'x')

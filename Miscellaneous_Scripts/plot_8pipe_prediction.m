@@ -74,7 +74,7 @@ for i = 1:9
         set(y_lab, 'FontSize', Font_scale);
         grid on;
     elseif i == 9
-        y_lab = ylabel(['$Q_out$ ' '[$L/min$]'],'interpreter','latex');
+        y_lab = ylabel(['$Q_{out}$ ' '[$L/s$]'],'interpreter','latex');
         set(y_lab, 'FontSize', Font_scale);
         grid on;
     else

@@ -79,9 +79,13 @@ tank2_ex = 19;
 slack_1 = 24;
 slack_2 = 25;
 
+% Defining time variables for plotting and disturbance selection
+dT = 5;  %s
+simulink_frequency = 2;
+
 figure
 
-ax(1) = subplot(3,2,1);
+ax(1) = subplot(4,1,1);
 plot(data(pump1_aux_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump1_aux_flow,startDataIndex:endDataIndex));
@@ -90,18 +94,9 @@ plot(mean_disturbance(1,startDataIndex:endDataIndex),'k--','LineWidth',1.75);
 xlim([0, endDataIndex-1]);
 ttl = title('Disturbance on tank 1','interpreter','latex');
 ttl.FontSize = Font_scale;
+
 %
-ax(2) = subplot(3,2,2);
-plot(data(pump2_aux_ref,startDataIndex:endDataIndex));
-hold on
-plot(data(pump2_aux_flow,startDataIndex:endDataIndex));
-hold on
-plot(mean_disturbance(3,startDataIndex:endDataIndex),'k--','LineWidth',1.75);
-xlim([0, endDataIndex-1]);
-ttl = title('Disturbance in the middle of the pipe','interpreter','latex');
-ttl.FontSize = Font_scale;
-%
-ax(3) = subplot(3,2,3);
+ax(2) = subplot(4,1,2);
 plot(data(tank1_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(tank1_mes,startDataIndex:endDataIndex));
@@ -110,30 +105,55 @@ xlim([0, endDataIndex-1]);
 ttl = title('Tank 1 level','interpreter','latex');
 ttl.FontSize = Font_scale;
 %
-ax(4) = subplot(3,2,4);
-plot(data(tank2_ref,startDataIndex:endDataIndex));
-hold on
-plot(data(tank2_mes,startDataIndex:endDataIndex));
-hold on
-xlim([0, endDataIndex-1]);
-ttl = title('Tank 2 level','interpreter','latex');
-ttl.FontSize = Font_scale;
-%
-ax(5) = subplot(3,2,5);
+ax(3) = subplot(4,1,3);
 plot(data(pump1_ref,startDataIndex:endDataIndex));
 hold on
 plot(data(pump1_flow,startDataIndex:endDataIndex));
 xlim([0, endDataIndex-1]);
 ttl = title('Pump 1','interpreter','latex');
 ttl.FontSize = Font_scale;
-%
-ax(6) = subplot(3,2,6);
-plot(data(pump2_ref,startDataIndex:endDataIndex));
+
+% Overflow calculation and ploting
+ax(4) = subplot(4,1,4);
+initial_level = data(tank1_ex,5)/100;
+tank1_calculated_of_volume = (data(tank1_ex,:)/100-initial_level)*(1/phi(1));
+tank1_calculated_of_volume(1) = 0;
+
+plot(tank1_calculated_of_volume(startDataIndex:endDataIndex),'r');
 hold on
-plot(data(pump2_flow,startDataIndex:endDataIndex));
+% plot(cumsum(data(slack_1,startDataIndex:endDataIndex)/60));
+% hold on
+
+plot(cumsum(data(slack_1,startDataIndex:endDataIndex))/120,'b');
+hold on;
 xlim([0, endDataIndex-1]);
-ttl = title('Pump 2','interpreter','latex');
+ttl = title('Tank 1 overflow','interpreter','latex');
 ttl.FontSize = Font_scale;
+%
+% ax(4) = subplot(3,2,4);
+% plot(data(tank2_ref,startDataIndex:endDataIndex));
+% hold on
+% plot(data(tank2_mes,startDataIndex:endDataIndex));
+% hold on
+% xlim([0, endDataIndex-1]);
+% ttl = title('Tank 2 level','interpreter','latex');
+% ttl.FontSize = Font_scale;
+% %
+% ax(5) = subplot(3,2,5);
+% plot(data(pump1_ref,startDataIndex:endDataIndex));
+% hold on
+% plot(data(pump1_flow,startDataIndex:endDataIndex));
+% xlim([0, endDataIndex-1]);
+% ttl = title('Pump 1','interpreter','latex');
+% ttl.FontSize = Font_scale;
+% %
+% ax(6) = subplot(3,2,6);
+% plot(data(pump2_ref,startDataIndex:endDataIndex));
+% hold on
+% plot(data(pump2_flow,startDataIndex:endDataIndex));
+% xlim([0, endDataIndex-1]);
+% ttl = title('Pump 2','interpreter','latex');
+% ttl.FontSize = Font_scale;
 linkaxes(ax, 'x')
 
 %% ======= Run Kalman for the entire experiment ========
@@ -145,8 +165,11 @@ for i = 1:size(data,2)
 end
 
 %% ======= Plotting the predictions =========
+% Defining time variables for plotting and disturbance selection
+dT = 5;  %s
+simulink_frequency = 2;
 
-time = 21870;%21870;%22110;
+time = 21870;%22110;
 if mod(time,10) ~= 0 || time < 40
     warningMessage = sprintf('Warning: time has to be a factor of 10 and >= 40');
     uiwait(errordlg(warningMessage));
@@ -156,10 +179,6 @@ MPC_run_step = (time - 40)/10 + 1
 X0 = [data(tank1_mes,time+1); X_zeros(:,time+1); data(tank2_mes,time+1)];
 Control_input_pumps = [Control_input_pump_1(MPC_run_step,:);Control_input_pump_2(MPC_run_step,:)];
 Overflow = [Overflow_1(MPC_run_step,:);Overflow_2(MPC_run_step,:)];
-
-% Defining time variables for plotting and disturbance selection
-dT = 5;  %s
-simulink_frequency = 2;
 
 % Disturbance selection:
 disturbance = zeros(2,Hp);
@@ -177,20 +196,18 @@ for j=1:1:Hp
 end
 X_prediction = X_prediction*100;
 Control_input_pumps = Control_input_pumps*60;
-
-subplot(3,2,1)
+subplot(4,1,1)
 plot(time:10:time+(Hp-1)*10,disturbance(1,:)*60,'k','LineWidth',1.75);
 leg = legend('$d_{1}$ reference', '$d_{1}$ flow','$d_{1}$ mean dist.','$d_{1}$ prediction');
-%legend(ax(1),'Location','NorthOutside','Orientation','Horizontal');
+set(leg,'Interpreter','latex');
 leg.Location = 'SouthOutside';
 leg.Orientation = 'Horizontal';
-set(leg,'Interpreter','latex');
 leg.FontSize = Font_scale;
 set(gca,'FontSize',Font_scale);
 y_lab=ylabel('$u_{d1} [\frac{L}{min}]$','Interpreter','Latex');
 y_lab.FontSize = Font_scale;
-%
-subplot(3,2,3)
+
+subplot(4,1,2)
 plot(time:10:time+Hp*10,X_prediction(1,:),'k','LineWidth',1.75);
 hold on;
 plot(702*ones(1,endDataIndex-startDataIndex+1),'g--');
@@ -205,61 +222,68 @@ leg.FontSize = Font_scale;
 set(gca,'FontSize',Font_scale);
 y_lab=ylabel('$h_{T1} [mm]$','Interpreter','Latex');
 y_lab.FontSize = Font_scale;
-%
-subplot(3,2,5)
+
+subplot(4,1,3)
 stairs(time:10:time+(Hp-1)*10,Control_input_pumps(1,:),'k','LineWidth',1.75);
 leg = legend('$q_{1}$ reference', '$q_{1}$ flow', '$q_{1}$ prediction');
 set(leg,'Interpreter','latex');
-hold on;
-x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex');
-set(leg,'Interpreter','latex');
-ttl.FontSize = Font_scale;
-leg.FontSize = Font_scale;
 leg.Location = 'SouthOutside';
 leg.Orientation = 'Horizontal';
+hold on;
+ttl.FontSize = Font_scale;
+leg.FontSize = Font_scale;
 set(gca,'FontSize',Font_scale);
 y_lab=ylabel('$u_{1} [\frac{L}{min}]$','Interpreter','Latex');
 y_lab.FontSize = Font_scale;
-%
-subplot(3,2,2)
-plot(time:10:time+(Hp-1)*10,disturbance(2,:)*60,'k','LineWidth',1.75);
-leg = legend('$d_{2}$ reference', '$d_{2}$ flow','$d_{2}$ mean dist.' ,'$d_{2}$ prediction');
-set(leg,'Interpreter','latex');
-leg.Location = 'SouthOutside';
-leg.Orientation = 'Horizontal';
+
+subplot(4,1,4);
+
+% plot(tank1_calculated_of_volume(startDataIndex:endDataIndex));
+% hold on
+% plot(cumsum(data(slack_1,startDataIndex:endDataIndex)/60));
+% hold on
+
+plot(time:10:time+(Hp-1)*10, cumsum(Overflow(1,:)*60)/12,'k','LineWidth',1.75);
+xlim([0, endDataIndex-1]);
+ttl = title('Tank 1 overflow','interpreter','latex');
 ttl.FontSize = Font_scale;
-leg.FontSize = Font_scale;
-set(gca,'FontSize',Font_scale);
-y_lab=ylabel('$u_{d2} [\frac{L}{min}]$','Interpreter','Latex');
-y_lab.FontSize = Font_scale;
-%
-subplot(3,2,4)
-plot(time:10:time+Hp*10,X_prediction(10,:),'k','LineWidth',1.75);
-hold on;
-plot(670*ones(1,endDataIndex-startDataIndex+1),'g--');
-hold on
-plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
-leg = legend('$T_{2}$ reference', '$T_{2}$ level', '$T_{2}$ prediction');
-set(leg,'Interpreter','latex');
-leg.Location = 'SouthOutside';
-leg.Orientation = 'Horizontal';
-ttl.FontSize = Font_scale;
-leg.FontSize = Font_scale;
-set(gca,'FontSize',Font_scale);
-y_lab=ylabel('$h_{T2} [mm]$','Interpreter','Latex');
-y_lab.FontSize = Font_scale;
-%
-subplot(3,2,6)
-stairs(time:10:time+(Hp-1)*10,Control_input_pumps(2,:),'k','LineWidth',1.75);
-leg = legend('$q_{2}$ reference', '$q_{2}$ flow','$q_{2}$ prediction');
-hold on;
 x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex');
 x_lab.FontSize = Font_scale;
+leg = legend('$T_1$ measured overflow','$T_1$ MPC implemented overflow', '$T_1$ predicted overflow');
 set(leg,'Interpreter','latex');
 leg.Location = 'SouthOutside';
 leg.Orientation = 'Horizontal';
-ttl.FontSize = Font_scale;
 leg.FontSize = Font_scale;
 set(gca,'FontSize',Font_scale);
-y_lab=ylabel('$u_{2} [\frac{L}{min}]$','Interpreter','Latex');
+y_lab=ylabel('$Of_1 [L]$','Interpreter','Latex');
 y_lab.FontSize = Font_scale;
+% subplot(3,2,2)
+% plot(time:10:time+(Hp-1)*10,disturbance(2,:)*60,'k','LineWidth',1.75);
+% leg = legend('$d_{2}$ reference', '$d_{2}$ flow','$d_{2}$ mean dist.' ,'$d_{2}$ prediction');
+% set(leg,'Interpreter','latex');
+% set(leg,'Interpreter','latex');
+% ttl.FontSize = Font_scale;
+% leg.FontSize = Font_scale;
+% set(gca,'FontSize',Font_scale);
+% subplot(3,2,4)
+% plot(time:10:time+Hp*10,X_prediction(10,:),'k','LineWidth',1.75);
+% hold on;
+% plot(670*ones(1,endDataIndex-startDataIndex+1),'g--');
+% hold on
+% plot(150*ones(1,endDataIndex-startDataIndex+1),'g--');
+% leg = legend('$T_{2}$ reference', '$T_{2}$ level', '$T_{2}$ prediction');
+% set(leg,'Interpreter','latex');
+% set(leg,'Interpreter','latex');
+% ttl.FontSize = Font_scale;
+% leg.FontSize = Font_scale;
+% set(gca,'FontSize',Font_scale);
+% subplot(3,2,6)
+% stairs(time:10:time+(Hp-1)*10,Control_input_pumps(2,:),'k','LineWidth',1.75);
+% leg = legend('$q_{2}$ reference', '$q_{2}$ flow','$q_{2}$ prediction');
+% set(leg,'Interpreter','latex');
+% hold on;
+% x_lab=xlabel('time [$0.5$ s]','Interpreter','Latex');
+% set(leg,'Interpreter','latex');
+% ttl.FontSize = Font_scale;
+% leg.FontSize = Font_scale;
+% set(gca,'FontSize',Font_scale);
