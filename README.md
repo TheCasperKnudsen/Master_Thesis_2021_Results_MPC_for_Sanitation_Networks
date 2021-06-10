@@ -14,4 +14,20 @@ The full thesis can be found in the AAU project liberay: **Link will be provided
 - Casper Houtved Knudsen - [LinedIn](https://www.linkedin.com/in/thecasperknudsen/)
 
 # The Repository
+The repo is a continuation, of [the first thesis repo, on Adises github](https://github.com/ahodzic7/waterlab-estimator). We elected to create a new repo as the old one was a mess, we are not software devs. When running code from this repocitory, we suggest to keep MATLAB at the root folder, in order to avoid problems with referenceing.
+
+The repo containts code for the three most elements of our thesis:
+1. System identification:
+Code for system identification (Grey-box) of gravity pipes in the [LinedIn](https://www.linkedin.com/in/adis-hodzic-7b2324181/), relying on the physical
+laws described by the Saint-Venant hyperbolic Partial Differential
+Equations.
+
+2. State estimation:
+Full state observability in sewer applications is typically not available,
+hence only some subsets of states are measured. 
+
+3. Stochastic Model Predictive Control:
+Although standard MPC methods offer a certain degree of robustness,
+stochastic MPC is a natural extension to deal with the uncertainties
+systematically.
 
