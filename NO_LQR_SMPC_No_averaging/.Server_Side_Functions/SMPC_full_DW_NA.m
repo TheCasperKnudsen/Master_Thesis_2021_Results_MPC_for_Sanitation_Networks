@@ -24,6 +24,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     persistent F_variance;
     persistent mean_disturbance;
     persistent average_dist_variance_Hp;
+    persistent D_sim_ens;
 
     % Constants
     dT = 5;                 % Sample time in minutes
@@ -52,6 +53,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
         mean_disturbance = evalin('base','mean_disturbance');
         mean_disturbance = mean_disturbance(1:2:3,:);
         average_dist_variance_Hp = evalin('base', 'average_dist_variance_Hp');
+        D_sim_ens = evalin('base','D_sim_ens');
 
         % Get covariances and run Make_LQR_real
         load('System_Identification/Noise_Identification/Results/model_and_messurement_cov_matrices.mat','measCovPipe','modelCovPipe');
