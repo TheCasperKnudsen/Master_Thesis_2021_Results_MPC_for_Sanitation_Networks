@@ -1,6 +1,7 @@
 %% Initial model
 plotEnbaler = 1;
 Nx = N_states;
+Font_scale = 14;
 if plotEnbaler == 1
     j=0;
     figure
@@ -10,16 +11,22 @@ if plotEnbaler == 1
         hold on
         plot(0:dataTimeStep:size(output(:,1),1)*dataTimeStep-dataTimeStep,y_init.OutputData(:,i),'r','LineWidth',0.5)
         leg = legend('HF Model','Lin. Model','Location','NorthEast');
+        leg.FontSize = Font_scale;
         set(leg, 'Interpreter', 'latex');
-        ylabel(['$h$' num2str(i) '[$' dataStructure.level_convert_to '$]'],'interpreter','latex');
+        y_lab = ylabel(['$h$' num2str(i) '[$' dataStructure.level_convert_to '$]'],'interpreter','latex');
+        set(y_lab, 'FontSize', Font_scale);
         if i == 1
-            title('Initial model','interpreter','latex')
+            ttl = title('Initial model','interpreter','latex');
+            ttl.FontSize = Font_scale;
         end
         grid on;
         j = j+1;
     end
-    xlabel(['Time [' dataStructure.data_time_unit ']'],'interpreter','latex');
+    x_lab = xlabel(['Time [' dataStructure.data_time_unit ']'],'interpreter','latex');
+    set(x_lab, 'FontSize', Font_scale);
     linkaxes(ax, 'x')
+    
+    set(gca,'FontSize',Font_scale);
 end
 %% Estimated system comparison
 clear ax;
@@ -31,17 +38,23 @@ if plotEnbaler == 1
         plot(0:dataTimeStep:size(output(:,1),1)*dataTimeStep-dataTimeStep,output(:,i),'b','LineWidth',0.5)
         hold on
         plot(0:dataTimeStep:size(output(:,1),1)*dataTimeStep-dataTimeStep,y_final.OutputData(:,i),'r','LineWidth',0.5)
-        leg = legend('HF Model','Lin. Model','Location','NorthEast');
+        leg = legend('Measurement','Lin. Model','Location','NorthEast');
         set(leg, 'Interpreter', 'latex');
-        ylabel(['$h$' num2str(i) '[$' dataStructure.level_convert_to '$]'],'interpreter','latex');
+        leg.FontSize = Font_scale;
+        y_lab = ylabel(['$h$' num2str(i) '[$' dataStructure.level_convert_to '$]'],'interpreter','latex');
+        set(y_lab, 'FontSize', Font_scale);
         if i == 1
-            title('Estimated model','interpreter','latex')
+            ttl = title('Estimated model','interpreter','latex');
+            ttl.FontSize = Font_scale;
         end
         grid on;
+        %set(gca,'FontSize',Font_scale);
         j = j+1;
     end
-    xlabel(['Time [' dataStructure.data_time_unit ']'],'interpreter','latex');
+    x_lab = xlabel(['Time [' dataStructure.data_time_unit ']'],'interpreter','latex');
+    set(x_lab, 'FontSize', Font_scale);
     linkaxes(ax, 'x')
+    
 end
 
 clear ax;
