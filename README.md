@@ -1,6 +1,6 @@
 # The Repositorys History
 The repo is a continuation, of [the first thesis repo, on Adises github](https://github.com/ahodzic7/waterlab-estimator). We elected to create a new repo as the old one was a mess; we are not software devs. When running code from this repository, we suggest keeping MATLAB at the root folder to avoid problems with referencing. I small picture of the lab is shown in the figure below.
-![labSetup](https://user-images.githubusercontent.com/25584836/121507470-f2e8c680-c9e4-11eb-8a63-db0115255e29.png)
+![labSetup](https://user-images.githubusercontent.com/25584836/121507470-f2e8c680-c9e4-11eb-8a63-db0115255e29.png| width= 50 )
 
 # Content of the Repository
 The repo containts code for the three most elements of our thesis:
