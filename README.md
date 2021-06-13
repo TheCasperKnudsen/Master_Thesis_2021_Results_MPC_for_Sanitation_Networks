@@ -4,7 +4,7 @@ The repo is a continuation, of [the first thesis repo, on Adises github](https:/
 <img src="https://user-images.githubusercontent.com/25584836/121507470-f2e8c680-c9e4-11eb-8a63-db0115255e29.png" width="50%" height="50%">
 
 # Content of the Repository
-The repo containts code for the three most elements of our thesis:
+The repo containts code for three elements of our thesis:
 
 **1. System identification:**
 Code for system identification (Grey-box) of gravity pipes is located in the folder of the same name. The gravity pipe identication, relies on a model derived based on the physical
