@@ -39,7 +39,7 @@ hold on;
 plot(volume_from_prediciton);
 hold on;
 plot(volume_from_ex_tank1);
-legend('Calc from Difference','Calc form Predictions','Calc from Tank')
+legend({'Calc from Difference','Calc form Predictions','Calc from Tank'},'Location','northwest')
 title('Estimated overflow volume')
 xlabel('Time [0.5 sec]') 
 ylabel('Volume [L]') 

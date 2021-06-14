@@ -1,3 +1,23 @@
+# The Repositorys History
+The repo is a continuation, of [the first thesis repo, on Adises github](https://github.com/ahodzic7/waterlab-estimator). We elected to create a new repo as the old one was a mess; we are not software devs. When running code from this repository, we suggest keeping MATLAB at the root folder to avoid problems with referencing. A small picture of the lab is shown in the figure below.
+
+<img src="https://user-images.githubusercontent.com/25584836/121507470-f2e8c680-c9e4-11eb-8a63-db0115255e29.png" width="50%" height="50%">
+
+# Content of the Repository
+The repo containts code for three elements of our thesis:
+
+**1. System identification:**
+Code for system identification (Grey-box) of gravity pipes is located in the folder of the same name. The gravity pipe identication, relies on a model derived based on the physical
+laws described by the Saint-Venant hyperbolic Partial Differential Equations. Code for estiating the different kinds of process noise present in the [the AAU Smart Water Lab](https://vbn.aau.dk/da/equipments/smart-water-infrastructures-laboratory-swil#:~:text=The%20AAU%20Smart%20Water%20Infrastructures,Collection%20or%20District%20Heating%20Systems) has been included in this folder aswell.
+
+**2. State estimation:**
+Full state observability in sewer applications is typically not available. Therefore we elected to create a simple Kalman filter estimating pipestates in a 8 pipe state model with 4 sensors. The code for this is includeded in the Kalman_Filter folder. In that folder a short demo script is included.
+
+**3. Stochastic Model Predictive Control:**
+As for the control of the [the AAU Smart Water Lab](https://vbn.aau.dk/da/equipments/smart-water-infrastructures-laboratory-swil#:~:text=The%20AAU%20Smart%20Water%20Infrastructures,Collection%20or%20District%20Heating%20Systems) we used a simulink framework provieded by AAU. Alot of the experiments code is specific to the lab. This means that if code applicable to other projects is the only code of interest attentions should only be paid to the server side files called: ..._full_DW_real.m and ..._init_DW_real.m. The simulink files, used to control the lab, are dependant on the github repo: [Matlab_Modbus_Client_and_Server](https://github.com/TheCasperKnudsen/Matlab_Modbus_Client_and_Server) - This is unrelated to the "Dependencies" folder.
+
+**Note:** that all simulink documents in the repo are setup such that they work for the configuration of [the AAU Smart Water Lab](https://vbn.aau.dk/da/equipments/smart-water-infrastructures-laboratory-swil#:~:text=The%20AAU%20Smart%20Water%20Infrastructures,Collection%20or%20District%20Heating%20Systems).
+
 # Stochastic Model Predictive Control of Combined Sewer Overflows in Sanitation Networks
 **Thesis Abstract:**
 Sanitation networks are vital infrastructure in modern society. They are used for transporting wastewater and rainwater from cities to treatment facilities, where wastewater is treated before being released into the environment. Most countries still use combined sanitation networks where wastewater and rainwater are transported in a single pipe. This leaves the combined sanitation network prone to overflow in the event of heavy rainfall. A solution to minimizing the overflow is Real Time Control (RTC).   A popular state-of-the-art RTC method used to anticipate and minimize overflows is standard Model Predictive Control (MPC). However, the standard formulation of the MPC does face challenges when dealing with the uncertainty caused by the inflow disturbances, i.e., the weather forecasts.
@@ -12,22 +32,4 @@ The full thesis can be found in the AAU project liberay: **Link will be provided
 **Names of Authors:**
 - Adis Hodzic - [LinedIn](https://www.linkedin.com/in/adis-hodzic-7b2324181/)
 - Casper Houtved Knudsen - [LinedIn](https://www.linkedin.com/in/thecasperknudsen/)
-
-# The Repository
-The repo is a continuation, of [the first thesis repo, on Adises github](https://github.com/ahodzic7/waterlab-estimator). We elected to create a new repo as the old one was a mess, we are not software devs. When running code from this repocitory, we suggest to keep MATLAB at the root folder, in order to avoid problems with referenceing.
-
-The repo containts code for the three most elements of our thesis:
-1. System identification:
-Code for system identification (Grey-box) of gravity pipes in the [LinedIn](https://www.linkedin.com/in/adis-hodzic-7b2324181/), relying on the physical
-laws described by the Saint-Venant hyperbolic Partial Differential
-Equations.
-
-2. State estimation:
-Full state observability in sewer applications is typically not available,
-hence only some subsets of states are measured. 
-
-3. Stochastic Model Predictive Control:
-Although standard MPC methods offer a certain degree of robustness,
-stochastic MPC is a natural extension to deal with the uncertainties
-systematically.
 
