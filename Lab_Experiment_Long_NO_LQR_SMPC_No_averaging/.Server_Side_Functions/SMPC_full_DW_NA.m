@@ -27,7 +27,7 @@ function [output]  = SMPC_full_DW_real(X0,time)
     persistent D_sim_ens;
 
     % Constants
-    dT = 5;                 % Sample time in minutes
+    dT = 7;                 % Sample time in minutes
     simulink_frequency = 2;  % Sampling frequency in seconds
     time = int64(round(time));
 

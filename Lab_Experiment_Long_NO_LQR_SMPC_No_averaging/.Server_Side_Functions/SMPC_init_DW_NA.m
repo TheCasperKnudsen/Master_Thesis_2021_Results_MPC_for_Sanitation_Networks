@@ -10,7 +10,7 @@ import casadi.*
 
 
 %% ============================================== MPC. setup ===================================
-Hp = 108;                                % prediction horizon   
+Hp = 162;                               % prediction horizon   
 Hu = Hp;                                % control horizion
 nT = 2;                                 % number of tanks
 nP = 8;                                 % number of pipe sections
