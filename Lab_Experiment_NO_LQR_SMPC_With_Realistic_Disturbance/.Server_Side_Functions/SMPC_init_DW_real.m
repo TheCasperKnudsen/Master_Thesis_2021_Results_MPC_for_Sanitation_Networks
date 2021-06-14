@@ -203,10 +203,10 @@ elseif warmStartEnabler == 0
 end
 
 %load('Lab_Experimetn_SMPC_With _Realistic_Disturbance\Data\X_ref_sim.mat');
-load('Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\D_sim_ens.mat');
-load('Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\mean_disturbance.mat');
-load('Lab_Experimetn_SMPC_With_Realistic_Disturbance\Data\average_dist_variance_Hp.mat');
 
+load('Distrubance_Data\D_sim_ens.mat');
+load('Distrubance_Data\mean_disturbance.mat');
+load('Distrubance_Data\average_dist_variance_Hp.mat');
 D_sim = [D_sim_ens(6,:);zeros(1,size(D_sim_ens,2)); D_sim_ens(24,:)];
 clear D_sim_ens;
 
